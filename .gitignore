@@ -1,5 +1,7 @@
-/nnU-Net/Results
-/nnU-Net/nnUNet_raw_data_base/nnUNet_raw_data/Task005_Prostate
-/nnU-Net/outputs/Task05_Prostate/
-/nnU-Net/nnUNet_trained_models
+# nn-UNet Prostate data files, trained models and Prostate outputs
+
+nn-UNet/Results
+nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task005_Prostate
+nn-UNet/outputs/
+nn-UNet/nnUNet_trained_models
 
