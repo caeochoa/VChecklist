@@ -2,6 +2,6 @@
 
 nn-UNet/Results
 nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task005_Prostate
-nn-UNet/outputs/
+nn-UNet/outputs/Task05_Prostate
 nn-UNet/nnUNet_trained_models
 
