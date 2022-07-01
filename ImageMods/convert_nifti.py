@@ -10,9 +10,9 @@ def Nifti2Numpy(file):
     nifti = nib.load(file)
     array = np.array(nifti.dataobj)
 
-    return array, nifti.affine
+    return array, nifti.affine, nifti.header
 
-def Numpy2Nifti(array, affine):
-    nifti = nib.Nifti1Image(array, affine)
+def Numpy2Nifti(array, affine, header=None):
+    nifti = nib.Nifti1Image(array, affine, header)
 
     return nifti
