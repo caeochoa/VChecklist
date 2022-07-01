@@ -238,4 +238,4 @@ class SampleImage3D():
 
         for i, image in enumerate(self.perturbed[1:]):
             nifti = Numpy2Nifti(image, self.affine, self.header)
-            nib.save(nifti, os.path.join(path, filename + "_perturbed_"+f"00{i}"))
+            nib.save(nifti, os.path.join(path, filename +f"_000{i}"+".nii.gz"))
