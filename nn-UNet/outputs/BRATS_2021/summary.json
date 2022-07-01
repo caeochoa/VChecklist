@@ -1,0 +1,138 @@
+{
+    "author": "Fabian",
+    "description": "",
+    "id": "76368cf64e6b",
+    "name": "",
+    "results": {
+        "all": [
+            {
+                "0": {
+                    "Accuracy": 0.9987426075268817,
+                    "Dice": 0.9993645837095021,
+                    "False Discovery Rate": 0.00118731091162938,
+                    "False Negative Rate": 8.291143269367751e-05,
+                    "False Omission Rate": 0.008175117266026356,
+                    "False Positive Rate": 0.10567762985639761,
+                    "Jaccard": 0.998729974413951,
+                    "Negative Predictive Value": 0.9918248827339736,
+                    "Precision": 0.9988126890883706,
+                    "Recall": 0.9999170885673063,
+                    "Total Positives Reference": 8828698,
+                    "Total Positives Test": 8838460,
+                    "True Negative Rate": 0.8943223701436024
+                },
+                "1": {
+                    "Accuracy": 0.993604502688172,
+                    "Dice": 0.0,
+                    "False Discovery Rate": 1.0,
+                    "False Negative Rate": 1.0,
+                    "False Omission Rate": 0.0023401575557634646,
+                    "False Positive Rate": 0.004074348010012607,
+                    "Jaccard": 0.0,
+                    "Negative Predictive Value": 0.9976598424442366,
+                    "Precision": 0.0,
+                    "Recall": 0.0,
+                    "Total Positives Reference": 20808,
+                    "Total Positives Test": 36291,
+                    "True Negative Rate": 0.9959256519899874
+                },
+                "2": {
+                    "Accuracy": 0.9921229838709678,
+                    "Dice": 0.02665670154459392,
+                    "False Discovery Rate": 0.96268165084286,
+                    "False Negative Rate": 0.979266691067238,
+                    "False Omission Rate": 0.0051093016946943985,
+                    "False Positive Rate": 0.0027970333566663674,
+                    "Jaccard": 0.013508395404620628,
+                    "Negative Predictive Value": 0.9948906983053056,
+                    "Precision": 0.037318349157140086,
+                    "Recall": 0.02073330893276207,
+                    "Total Positives Reference": 46447,
+                    "Total Positives Test": 25805,
+                    "True Negative Rate": 0.9972029666433336
+                },
+                "4": {
+                    "Accuracy": 0.9964105062724015,
+                    "Dice": 0.0,
+                    "False Discovery Rate": NaN,
+                    "False Negative Rate": 1.0,
+                    "False Omission Rate": 0.0035894937275985665,
+                    "False Positive Rate": 0.0,
+                    "Jaccard": 0.0,
+                    "Negative Predictive Value": 0.9964105062724015,
+                    "Precision": NaN,
+                    "Recall": 0.0,
+                    "Total Positives Reference": 32047,
+                    "Total Positives Test": 0,
+                    "True Negative Rate": 1.0
+                },
+                "reference": "nnUNet_raw_data_base/nnUNet_raw_data/BRATS_2021/labels/BraTS2021_00495.nii.gz",
+                "test": "outputs/BRATS_2021/BraTS2021_00495.nii.gz"
+            }
+        ],
+        "mean": {
+            "0": {
+                "Accuracy": 0.9987426075268817,
+                "Dice": 0.9993645837095021,
+                "False Discovery Rate": 0.00118731091162938,
+                "False Negative Rate": 8.291143269367751e-05,
+                "False Omission Rate": 0.008175117266026356,
+                "False Positive Rate": 0.10567762985639761,
+                "Jaccard": 0.998729974413951,
+                "Negative Predictive Value": 0.9918248827339736,
+                "Precision": 0.9988126890883706,
+                "Recall": 0.9999170885673063,
+                "Total Positives Reference": 8828698.0,
+                "Total Positives Test": 8838460.0,
+                "True Negative Rate": 0.8943223701436024
+            },
+            "1": {
+                "Accuracy": 0.993604502688172,
+                "Dice": 0.0,
+                "False Discovery Rate": 1.0,
+                "False Negative Rate": 1.0,
+                "False Omission Rate": 0.0023401575557634646,
+                "False Positive Rate": 0.004074348010012607,
+                "Jaccard": 0.0,
+                "Negative Predictive Value": 0.9976598424442366,
+                "Precision": 0.0,
+                "Recall": 0.0,
+                "Total Positives Reference": 20808.0,
+                "Total Positives Test": 36291.0,
+                "True Negative Rate": 0.9959256519899874
+            },
+            "2": {
+                "Accuracy": 0.9921229838709678,
+                "Dice": 0.02665670154459392,
+                "False Discovery Rate": 0.96268165084286,
+                "False Negative Rate": 0.979266691067238,
+                "False Omission Rate": 0.0051093016946943985,
+                "False Positive Rate": 0.0027970333566663674,
+                "Jaccard": 0.013508395404620628,
+                "Negative Predictive Value": 0.9948906983053056,
+                "Precision": 0.037318349157140086,
+                "Recall": 0.02073330893276207,
+                "Total Positives Reference": 46447.0,
+                "Total Positives Test": 25805.0,
+                "True Negative Rate": 0.9972029666433336
+            },
+            "4": {
+                "Accuracy": 0.9964105062724015,
+                "Dice": 0.0,
+                "False Discovery Rate": NaN,
+                "False Negative Rate": 1.0,
+                "False Omission Rate": 0.0035894937275985665,
+                "False Positive Rate": 0.0,
+                "Jaccard": 0.0,
+                "Negative Predictive Value": 0.9964105062724015,
+                "Precision": NaN,
+                "Recall": 0.0,
+                "Total Positives Reference": 32047.0,
+                "Total Positives Test": 0.0,
+                "True Negative Rate": 1.0
+            }
+        }
+    },
+    "task": "",
+    "timestamp": "2022-07-01 21:08:38.187330"
+}
