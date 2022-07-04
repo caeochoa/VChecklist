@@ -5,8 +5,9 @@ import imageio
 import numpy as np
 import nibabel as nib
 from random import random
-from convert_nifti import Nifti2Numpy, Numpy2Nifti
+from .convert_nifti import Nifti2Numpy, Numpy2Nifti
 import os
+import csv
 
 
 class SampleImage():
@@ -154,6 +155,7 @@ class SampleImage3D():
         self.PATCH_PER_SIDE = np.array(self.data.shape)//np.array(self.PATCH_SIZE)
         self.perturbed = np.zeros(self.data.shape)
         self.perturbed = np.expand_dims(self.perturbed, 0)
+        self.applied_perturbations = []
 
 
     def show_slices(self, slices=None):
@@ -191,6 +193,7 @@ class SampleImage3D():
                         perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
+        self.applied_perturbations.append(["rr", int(proportion)*100, k])
         
     
     def central_rotation(self, proportion:float=0.5, k:int=1):
@@ -207,6 +210,7 @@ class SampleImage3D():
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
+        self.applied_perturbations.append(["cr", int(proportion)*100, k])
 
     def outer_rotation(self, proportion:float=0.5, k:int=1):
 
@@ -222,10 +226,12 @@ class SampleImage3D():
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
+        self.applied_perturbations.append(["or", int(proportion)*100, k])
 
-    def save(self, path=None):
+    def save(self, path=None, filename=None, nnunet=False, save_config=True):
         if not path:
             path = "/".join(self.image_path.split("/")[:-1])
+        if not filename:
             filename = self.image_path.split("/")[-1].split(".")[0]
             
         path = os.path.join(path, "perturbed")
@@ -238,4 +244,49 @@ class SampleImage3D():
 
         for i, image in enumerate(self.perturbed[1:]):
             nifti = Numpy2Nifti(image, self.affine, self.header)
-            nib.save(nifti, os.path.join(path, filename +f"_000{i}"+".nii.gz"))
+            if nnunet:
+                name = filename.split("_")
+                name = "_".join(name[0:2]) +"_"+"-".join([str(x) for x in self.applied_perturbations[i]])+"_" + "_".join(name[2:])
+
+            nib.save(nifti, os.path.join(path, filename +".nii.gz"))
+        
+        if save_config:
+            config = {}
+            for ap in self.applied_perturbations:
+                config[ap[0]] = f"{ap[1]/100},{ap[2]}"
+
+            with open(os.path.join(path, f"{filename}_perturbation_configs.csv"), mode="w") as csvfile:
+                fields = ["rr", "cr", "or"]
+                writer = csv.DictWriter(csvfile, fields, delimiter=";")
+                writer.writeheader()
+                for pert in self.applied_perturbations:
+                    writer.writerow({f"{pert[0]}":f"{pert[1]/100},{pert[2]}"})
+    
+    def apply_config(self, path, save=True, nnunet = False):
+        with open(path, mode="r") as csvfile:
+            csv_reader = csv.DictReader(csvfile, delimiter=";")
+            for row in csv_reader:
+                self.config = {"rr":[],"cr":[],"or":[]}
+                for pert in row:
+                    p = row[pert].split(",")
+                    if len(p) > 0:
+                        self.config[pert].append([float(x) for x in p])
+        
+        for pert in self.config.keys():
+            for conf in self.config[pert]:
+                if pert == "rr":
+                    self.random_rotation(conf[0], conf[1])
+                elif pert == "cr":
+                    self.central_rotation(conf[0], conf[1])
+                elif pert == "or":
+                    self.outer_rotation(conf[0], conf[1])
+        
+        if save:
+            self.save(nnunet=nnunet, save_config=False)
+                
+                
+        
+
+
+
+
