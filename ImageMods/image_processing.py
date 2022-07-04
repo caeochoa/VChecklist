@@ -186,14 +186,15 @@ class SampleImage3D():
 
         perturbed = self.data.copy()
 
-        for i,x in enumerate(range(0, self.data.shape[0], self.PATCH_SIZE[0])):
-            for j,y in enumerate(range(0,self.data.shape[1], self.PATCH_SIZE[1])):
-                for k,z in enumerate(range(0,self.data.shape[2], self.PATCH_SIZE[2])):
+        for x in range(0, self.data.shape[0], self.PATCH_SIZE[0]):
+            for y in range(0,self.data.shape[1], self.PATCH_SIZE[1]):
+                for z in range(0,self.data.shape[2], self.PATCH_SIZE[2]):
                     if random() <= proportion:
                         perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        self.applied_perturbations.append(["rr", int(proportion)*100, k])
+        print(["rr", int(proportion)*100, k])
+        self.applied_perturbations.append(["rr", int(proportion*100), k])
         
     
     def central_rotation(self, proportion:float=0.5, k:int=1):
@@ -204,13 +205,13 @@ class SampleImage3D():
 
         for i,x in enumerate(range(0, self.data.shape[0], self.PATCH_SIZE[0])):
             for j,y in enumerate(range(0,self.data.shape[1], self.PATCH_SIZE[1])):
-                for k,z in enumerate(range(0,self.data.shape[2], self.PATCH_SIZE[2])):
-                    if (self.PATCH_PER_SIDE[0]-1)/4 <= i < (self.PATCH_PER_SIDE[0]-1)*3/4 and (self.PATCH_PER_SIDE[1]-1)/4 <= j < (self.PATCH_PER_SIDE[1]-1)*3/4 and (self.PATCH_PER_SIDE[2]-1)/4 <= k < (self.PATCH_PER_SIDE[2]-1)*3/4:
+                for k_,z in enumerate(range(0,self.data.shape[2], self.PATCH_SIZE[2])):
+                    if (self.PATCH_PER_SIDE[0]-1)/4 <= i < (self.PATCH_PER_SIDE[0]-1)*3/4 and (self.PATCH_PER_SIDE[1]-1)/4 <= j < (self.PATCH_PER_SIDE[1]-1)*3/4 and (self.PATCH_PER_SIDE[2]-1)/4 <= k_ < (self.PATCH_PER_SIDE[2]-1)*3/4:
                         if random() <= proportion:
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        self.applied_perturbations.append(["cr", int(proportion)*100, k])
+        self.applied_perturbations.append(["cr", int(proportion*100), k])
 
     def outer_rotation(self, proportion:float=0.5, k:int=1):
 
@@ -220,13 +221,13 @@ class SampleImage3D():
 
         for i,x in enumerate(range(0, self.data.shape[0], self.PATCH_SIZE[0])):
             for j,y in enumerate(range(0,self.data.shape[1], self.PATCH_SIZE[1])):
-                for k,z in enumerate(range(0,self.data.shape[2], self.PATCH_SIZE[2])):
-                    if not ((self.PATCH_PER_SIDE[0]-1)/4 <= i < (self.PATCH_PER_SIDE[0]-1)*3/4 and (self.PATCH_PER_SIDE[1]-1)/4 <= j < (self.PATCH_PER_SIDE[1]-1)*3/4 and (self.PATCH_PER_SIDE[2]-1)/4 <= k < (self.PATCH_PER_SIDE[2]-1)*3/4):
+                for k_,z in enumerate(range(0,self.data.shape[2], self.PATCH_SIZE[2])):
+                    if not ((self.PATCH_PER_SIDE[0]-1)/4 <= i < (self.PATCH_PER_SIDE[0]-1)*3/4 and (self.PATCH_PER_SIDE[1]-1)/4 <= j < (self.PATCH_PER_SIDE[1]-1)*3/4 and (self.PATCH_PER_SIDE[2]-1)/4 <= k_ < (self.PATCH_PER_SIDE[2]-1)*3/4):
                         if random() <= proportion:
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        self.applied_perturbations.append(["or", int(proportion)*100, k])
+        self.applied_perturbations.append(["or", int(proportion*100), k])
 
     def save(self, path=None, filename=None, nnunet=False, save_config=True):
         if not path:
@@ -247,8 +248,9 @@ class SampleImage3D():
             if nnunet:
                 name = filename.split("_")
                 name = "_".join(name[0:2]) +"_"+"-".join([str(x) for x in self.applied_perturbations[i]])+"_" + "_".join(name[2:])
-
-            nib.save(nifti, os.path.join(path, filename +".nii.gz"))
+            else:
+                name = filename
+            nib.save(nifti, os.path.join(path, name +".nii.gz"))
         
         if save_config:
             config = {}
@@ -262,7 +264,7 @@ class SampleImage3D():
                 for pert in self.applied_perturbations:
                     writer.writerow({f"{pert[0]}":f"{pert[1]/100},{pert[2]}"})
     
-    def apply_config(self, path, save=True, nnunet = False):
+    def apply_config(self, path, save=True, save_config=False, nnunet = False):
         with open(path, mode="r") as csvfile:
             csv_reader = csv.DictReader(csvfile, delimiter=";")
             for row in csv_reader:
@@ -272,17 +274,20 @@ class SampleImage3D():
                     if len(p) > 0:
                         self.config[pert].append([float(x) for x in p])
         
+        print("Applying the following configuration:", self.config)
+        
         for pert in self.config.keys():
             for conf in self.config[pert]:
-                if pert == "rr":
-                    self.random_rotation(conf[0], conf[1])
-                elif pert == "cr":
-                    self.central_rotation(conf[0], conf[1])
-                elif pert == "or":
-                    self.outer_rotation(conf[0], conf[1])
+                if conf[0] != 0 and conf[1] != 0:
+                    if pert == "rr":
+                        self.random_rotation(conf[0], conf[1])
+                    elif pert == "cr":
+                        self.central_rotation(conf[0], conf[1])
+                    elif pert == "or":
+                        self.outer_rotation(conf[0], conf[1])
         
         if save:
-            self.save(nnunet=nnunet, save_config=False)
+            self.save(nnunet=nnunet, save_config=save_config)
                 
                 
         
