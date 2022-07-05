@@ -194,7 +194,7 @@ class SampleImage3D():
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
         print(["rr", int(proportion)*100, k])
-        self.applied_perturbations.append(["rr", int(proportion*100), k])
+        self.applied_perturbations.append(["rr", int(proportion*100), int(k)])
         
     
     def central_rotation(self, proportion:float=0.5, k:int=1):
@@ -211,7 +211,7 @@ class SampleImage3D():
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        self.applied_perturbations.append(["cr", int(proportion*100), k])
+        self.applied_perturbations.append(["cr", int(proportion*100), int(k)])
 
     def outer_rotation(self, proportion:float=0.5, k:int=1):
 
@@ -227,7 +227,7 @@ class SampleImage3D():
                             perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        self.applied_perturbations.append(["or", int(proportion*100), k])
+        self.applied_perturbations.append(["or", int(proportion*100), int(k)])
 
     def save(self, path=None, filename=None, nnunet=False, save_config=True):
         if not path:
@@ -245,12 +245,21 @@ class SampleImage3D():
 
         for i, image in enumerate(self.perturbed[1:]):
             nifti = Numpy2Nifti(image, self.affine, self.header)
-            if nnunet:
-                name = filename.split("_")
-                name = "_".join(name[0:2]) +"_"+"-".join([str(x) for x in self.applied_perturbations[i]])+"_" + "_".join(name[2:])
-            else:
-                name = filename
-            nib.save(nifti, os.path.join(path, name +".nii.gz"))
+            #if nnunet:
+            #    name = filename.split("_")
+            #    name = "_".join(name[0:2]) +"_"+"-".join([str(x) for x in self.applied_perturbations[i]])+"_" + "_".join(name[2:])
+            #else:
+            #    name = filename
+
+            pert_path = os.path.join(path, "-".join([str(x) for x in self.applied_perturbations[i]]))
+            try:
+                print(f"Creating directory {pert_path}")
+                os.mkdir(pert_path)
+            except OSError:
+                print("Directory already exists")
+            
+
+            nib.save(nifti, os.path.join(pert_path, filename +".nii.gz"))
         
         if save_config:
             config = {}
