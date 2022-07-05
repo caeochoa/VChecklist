@@ -3,8 +3,9 @@ import os
 from nnunet.inference.predict import predict_from_folder
 from nnunet.paths import network_training_output_dir, default_trainer, default_plans_identifier
 from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
-#im = SampleImage3D("/Users/caeochoa/Documents/GUH20/VChecklist/nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/imagesTs/BraTS2021_00495_0000.nii.gz")
-#im.apply_config("ImageMods/configs/basic.csv", save_config=True, nnunet=True)
+from nnunet.evaluation.evaluator import evaluate_folder
+import json
+import numpy as np
 
 #### This whole file assumes the images are in 3D format ".nii.gz", 
 #### but the nnunet file naming format can be easily adjusted
@@ -131,8 +132,42 @@ def predict(input_folder, output_folder):
                         lowres_segmentations=lowres_segmentations, part_id=part_id, num_parts=num_parts, tta=tta, mixed_precision=mixed_precision,
                         overwrite_existing=overwrite_existing, mode=mode , overwrite_all_in_gpu=overwrite_all_in_gpu, step_size=step_size)
 
-# evaluate each of these against true labels **in python**
+# evaluate each of these against true labels
 # test definition of property [1] based on these evaluations
+
+def compare_mean(dict1, dict2, label, criteria):
+    return dict1["results"]["mean"][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
+
+def compare_sample(dict1, dict2, sample, label, criteria):
+    return dict1["results"]["all"][sample][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
+
+def test_property1(output_folder_og, output_folder_perturbed_path):
+
+    eval_og_csv = os.path.join(output_folder_og, "summary.json")
+    eval_pert_csv = os.path.join(output_folder_perturbed_path, "summary.json")
+
+    with open(eval_og_csv) as file:
+        eval_og = json.load(file)
+    
+    with open(eval_pert_csv) as file:
+        eval_pert = json.load(file)
+    
+    assert len(eval_og["results"]["all"]) == len(eval_pert["results"]["all"]), f"The number of samples is different between original and perturbed folders"
+    
+    eval_difference = []
+    for sample in range(len(eval_og_csv["results"]["all"])):
+        eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, "Accuracy") for label in (0,1,2,4)])
+    
+    eval_difference = np.array(eval_difference)
+    avg_accuracy = np.mean(eval_difference, axis=1)
+    similarity = avg_accuracy[avg_accuracy <= 0.01].shape[0]/avg_accuracy.shape[0]*100
+
+    return similarity
+    
+    
+    
+
+
 
 if __name__ == "__main__":
 
@@ -143,12 +178,33 @@ if __name__ == "__main__":
 
     # predict original
     input_folder_og = data_path # -i
-    output_folder_og = os.path.abspath("nn-UNet/outputs/BRATS_2021/original") # would be nice to also input this with an argument
+    output_folder_og = os.path.abspath("nn-UNet/outputs/BraTS2021/original") # would be nice to also input this with an argument
     predict(input_folder_og, output_folder_og)
     
     # predict perturbed
     input_folder_perturbed = os.path.join(data_path, "perturbed")
-    output_folder_perturbed = os.path.abspath("nn-UNet/outputs/BRATS_2021/perturbed")
-    predict(input_folder_perturbed, output_folder_perturbed)
+    output_folder_perturbed = os.path.abspath("nn-UNet/outputs/BraTS2021/perturbed")
 
+    folders = [folder for folder in os.listdir(input_folder_perturbed) if not os.path.isfile(os.path.join(input_folder_perturbed, folder))]
+
+    for folder in folders:
+        input_folder_perturbed_path = os.path.join(input_folder_perturbed, folder)
+        output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
+        predict(input_folder_perturbed_path, output_folder_perturbed_path)
+
+    # evaluate each of these against true labels
+    labels = os.path.abspath("nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/labels")
+    ## original 
+    ### (assuming nnunet and BraTS)
+    evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_og, labels = (0,1,2,4))
     
+    ## perturbed 
+    ### (assuming nnunet and BraTS)
+    for folder in folders:
+        output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
+        evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
+        
+        # test definition of property [1] based on these evaluations
+        similarity = test_property1(output_folder_og, output_folder_perturbed_path)
+        print(f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples")
+
