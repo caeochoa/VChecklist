@@ -59,7 +59,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
                     conf.append(float(prop))
                     k = input("Introduce angle of perturbation (multiple of 90):")
                     assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(k//90)
+                    conf.append(float(k)//90)
                     im.random_rotation(conf[0], conf[1])
                 except AssertionError:
                     continue
@@ -71,7 +71,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
                     conf.append(float(prop))
                     k = input("Introduce angle of perturbation (multiple of 90):")
                     assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(k//90)
+                    conf.append(float(k)//90)
                     im.central_rotation(conf[0], conf[1])
                 except AssertionError:
                     continue
@@ -83,7 +83,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
                     conf.append(float(prop))
                     k = input("Introduce angle of perturbation (multiple of 90):")
                     assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(k//90)
+                    conf.append(float(k)//90)
                     im.outer_rotation(conf[0], conf[1])
                 except AssertionError:
                     continue
