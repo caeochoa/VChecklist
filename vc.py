@@ -88,7 +88,8 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
                 except AssertionError:
                     continue
         im.save(nnunet=nnunet) # save in nnunet format, and save the config file
-        config_path = images[0].split(".")[0] + "_perturbation_configs.csv"
+        images_path, filename = os.path.split(images)
+        config_path = os.path.join(os.path.join(images_path, "perturbed"), filename.split(".")[0] + "_perturbation_configs.csv")
 
         for image_path in images[1:]:
             im = SampleImage3D(image_path)
