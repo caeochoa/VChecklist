@@ -6,6 +6,7 @@ from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
 from nnunet.evaluation.evaluator import evaluate_folder
 import json
 import numpy as np
+import argparse
 
 #### This whole file assumes the images are in 3D format ".nii.gz", 
 #### but the nnunet file naming format can be easily adjusted
@@ -171,14 +172,20 @@ def test_property1(output_folder_og, output_folder_perturbed_path):
 
 if __name__ == "__main__":
 
-    data_path = "nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data"
+    parser = argparse.ArgumentParser("Visual Checklist for nn_UNet", description="Applies the specified perturbations to a dataset, feeds them to the nn_UNet model and reports the results on a established property.")
+    parser.add_argument("-i", "--input", help="The path to the input data to perturb and feed the model")
+    parser.add_argument("-o", "--output", help="The path to save the output of the model for the original and perturbed data.")
+
+    args = parser.parse_args()
+
+    data_path = args.input
     data_path = os.path.abspath(data_path)
     images = load_images(data_path) # load a batch of samples
     perturb(images=images, mode="manual", nnunet=True) # perturb each of them with the same configuration (manually chosen once, or based on config file)
 
     # predict original
     input_folder_og = data_path # -i
-    output_folder_og = os.path.abspath("nn-UNet/outputs/BraTS2021/original") # would be nice to also input this with an argument
+    output_folder_og = os.path.abspath(args.output) # would be nice to also input this with an argument
     predict(input_folder_og, output_folder_og)
     
     # predict perturbed
