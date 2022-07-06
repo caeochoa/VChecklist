@@ -276,8 +276,8 @@ class SampleImage3D():
     def apply_config(self, path, save=True, save_config=False, nnunet = False):
         with open(path, mode="r") as csvfile:
             csv_reader = csv.DictReader(csvfile, delimiter=";")
+            self.config = {"rr":[],"cr":[],"or":[]}
             for row in csv_reader:
-                self.config = {"rr":[],"cr":[],"or":[]}
                 for pert in row:
                     p = row[pert].split(",")
                     if len(p) > 0 and (p[0] != "" and p[1] != ""):
