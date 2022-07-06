@@ -98,7 +98,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
     if mode == "file" or mode == "f":
         for image_path in images:
             im = SampleImage3D(image_path)
-            im.apply_config(os.path.abspath(config_path), save_config=image_path==images[0], nnunet=nnunet) # this should save the config only if using the first image
+            im.apply_config(os.path.abspath(config), save_config=image_path==images[0], nnunet=nnunet) # this should save the config only if using the first image
 
             
 
