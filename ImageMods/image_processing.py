@@ -280,7 +280,7 @@ class SampleImage3D():
                 self.config = {"rr":[],"cr":[],"or":[]}
                 for pert in row:
                     p = row[pert].split(",")
-                    if len(p) > 0:
+                    if len(p) > 0 and (p[0] != "" and p[1] != ""):
                         self.config[pert].append([float(x) for x in p])
         
         print("Applying the following configuration:", self.config)
