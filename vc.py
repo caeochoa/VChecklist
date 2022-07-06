@@ -39,7 +39,7 @@ def load_images(data_path):
 def perturb(images, mode:str="manual", config=None, nnunet=False):
     '''Take a batch of images and perturb each of them with the same configuration
     :param images: a list of image paths to be perturbed
-    :param mode: a setting that establishes whether the perturbation is chosen mmanually or in a config file
+    :param mode: {manual | file} a setting that establishes whether the perturbation is chosen manually or in a config file
     :param config: path to the config file if mode = file
     :param nnunet: a boolean establishing whether to use nnunet format for files'''
     # perturb each of them with the same configuration (manually chosen once, or based on config file)
@@ -175,13 +175,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Visual Checklist for nn_UNet", description="Applies the specified perturbations to a dataset, feeds them to the nn_UNet model and reports the results on a established property.")
     parser.add_argument("-i", "--input", help="The path to the input data to perturb and feed the model")
     parser.add_argument("-o", "--output", help="The path to save the output of the model for the original and perturbed data.")
-
+    parser.add_argument("-c", "--config", help="Choose configuration file for perturbation.")
     args = parser.parse_args()
 
     data_path = args.input
     data_path = os.path.abspath(data_path)
     images = load_images(data_path) # load a batch of samples
-    perturb(images=images, mode="manual", nnunet=True) # perturb each of them with the same configuration (manually chosen once, or based on config file)
+    if args.config:
+        perturb(images=images, mode="file", config=os.path.abspath(args.config), nnunet=True)
+    else:
+        perturb(images=images, mode="manual", nnunet=True) # perturb each of them with the same configuration (manually chosen once, or based on config file)
 
     # predict original
     input_folder_og = data_path # -i
