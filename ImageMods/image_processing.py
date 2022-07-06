@@ -1,5 +1,3 @@
-from types import NoneType
-from scipy import ndimage
 import matplotlib.pyplot as plt
 import imageio
 import numpy as np
@@ -76,7 +74,7 @@ class SampleImage():
     
     def show_patches(self, patches=None, span:float=0, label:bool=False, save=False):
 
-        if type(patches) == NoneType:
+        if not patches:
             patches = self.patches
         else:
             assert patches.shape == (self.PATCH_PER_SIDE, self.PATCH_PER_SIDE, self.PATCH_SIZE, self.PATCH_SIZE, self.image.shape[-1]), ""
@@ -161,7 +159,7 @@ class SampleImage3D():
     def show_slices(self, slices=None):
         """ Function to display row of image slices """
         # consider adding the option to easily choose other slices of self.data
-        if type(slices) == NoneType:
+        if not slices:
             slices = [self.data[self.data.shape[0]//2,:,:], self.data[:,self.data.shape[0]//2,:], self.data[:,:,self.data.shape[0]//2]]
         elif type(slices) == np.ndarray:
             slices = [slices[slices.shape[0]//2,:,:], slices[:,slices.shape[0]//2,:], slices[:,:,slices.shape[0]//2]]

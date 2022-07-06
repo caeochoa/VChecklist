@@ -25,7 +25,7 @@ def load_images(data_path):
     all_files = [file for file in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, file))]
 
     for file in all_files:
-        assert file.split(".")[-2:] == ["nii", "gz"] # make sure all files are the right format
+        assert file.split(".")[-2:] == ["nii", "gz"], f"Make sure all files are the right format (format is {file})"
 
     ### finally, return a list with the path of each file
 
@@ -36,7 +36,7 @@ def load_images(data_path):
 
 
 
-def perturb(images, mode:str="manual", config=None, nnunet=False):
+def perturb(images, config=None, nnunet=False):
     '''Take a batch of images and perturb each of them with the same configuration
     :param images: a list of image paths to be perturbed
     :param mode: {manual | file} a setting that establishes whether the perturbation is chosen manually or in a config file
@@ -45,7 +45,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
     # perturb each of them with the same configuration (manually chosen once, or based on config file)
     ## mode will establish wether the config is chosen manually once or on config file
 
-    if mode == "manual" or mode == "m":
+    if not config:
         im = SampleImage3D(images[0])
         
         pert = "-"
@@ -94,8 +94,7 @@ def perturb(images, mode:str="manual", config=None, nnunet=False):
         for image_path in images[1:]:
             im = SampleImage3D(image_path)
             im.apply_config(os.path.abspath(config_path), nnunet=nnunet)
-    
-    if mode == "file" or mode == "f":
+    else:
         for image_path in images:
             im = SampleImage3D(image_path)
             im.apply_config(os.path.abspath(config), save_config=image_path==images[0], nnunet=nnunet) # this should save the config only if using the first image
@@ -177,15 +176,18 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", help="The path to the input data to perturb and feed the model")
     parser.add_argument("-o", "--output", help="The path to save the output of the model for the original and perturbed data.")
     parser.add_argument("-c", "--config", help="Choose configuration file for perturbation.")
+    parser.add_argument("-p", "--perturb_labels", help="A flag that establishes that labels should be perturbed too.", action="store_true")
     args = parser.parse_args()
 
     data_path = args.input
     data_path = os.path.abspath(data_path)
     images = load_images(data_path) # load a batch of samples
     if args.config:
-        perturb(images=images, mode="file", config=os.path.abspath(args.config), nnunet=True)
+        config_path = os.path.abspath(args.config)
     else:
-        perturb(images=images, mode="manual", nnunet=True) # perturb each of them with the same configuration (manually chosen once, or based on config file)
+        config_path = None
+    
+    perturb(images=images, config=os.path.abspath(args.config), nnunet=True) # perturb each of them with the same configuration (manually chosen once, or based on config file)
 
     # predict original
     input_folder_og = data_path # -i
@@ -205,6 +207,16 @@ if __name__ == "__main__":
 
     # evaluate each of these against true labels
     labels = os.path.join(os.path.dirname(input_folder_og), "labels")
+
+    if args.perturb_labels:
+        labels_files = load_images(labels)
+        if not config_path:
+            config_path = os.path.join(input_folder_perturbed, os.path.split(labels_files[0])[1].split(".")[0] + "_perturbed.csv")
+        perturb(images=labels_files, config=config_path, nnunet=True)
+        labels_perturbed = os.path.join(labels, "perturbed")
+    else:
+        labels_perturbed = labels
+
     ## original 
     ### (assuming nnunet and BraTS)
     evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_og, labels = (0,1,2,4))
@@ -215,7 +227,7 @@ if __name__ == "__main__":
     with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report:
         for folder in folders:
             output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
-            evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
+            evaluate_folder(folder_with_gts=labels_perturbed, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
             
             # test definition of property [1] based on these evaluations
             similarity = test_property1(output_folder_og, output_folder_perturbed_path)
