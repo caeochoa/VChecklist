@@ -11,6 +11,7 @@ nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/
 
 # .out slurm files
 **/slurm-*.out
+**/*.cpython-310.pyc
 
 # classic gitignore stuff
 
@@ -174,3 +175,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+__pycache__/tests.cpython-310.pyc
