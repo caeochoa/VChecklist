@@ -4,4 +4,7 @@ nn-UNet/Results
 nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task005_Prostate
 nn-UNet/outputs/Task05_Prostate
 nn-UNet/nnUNet_trained_models
+
+# nn-UNet BraTS2021 data
 nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/BRATS_2021/RSNA_ASNR_MICCAI_BraTS2021_ValidationData/
+nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/
