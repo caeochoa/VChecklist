@@ -194,7 +194,7 @@ if __name__ == "__main__":
     
     # predict perturbed
     input_folder_perturbed = os.path.join(data_path, "perturbed")
-    output_folder_perturbed = os.path.abspath("nn-UNet/outputs/BraTS2021/perturbed")
+    output_folder_perturbed = os.path.join(output_folder_og, "perturbed")
 
     folders = [folder for folder in os.listdir(input_folder_perturbed) if not os.path.isfile(os.path.join(input_folder_perturbed, folder))]
 
@@ -204,18 +204,22 @@ if __name__ == "__main__":
         predict(input_folder_perturbed_path, output_folder_perturbed_path)
 
     # evaluate each of these against true labels
-    labels = os.path.abspath("nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/labels")
+    labels = os.path.join(os.path.dirname(input_folder_og), "labels")
     ## original 
     ### (assuming nnunet and BraTS)
     evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_og, labels = (0,1,2,4))
     
     ## perturbed 
     ### (assuming nnunet and BraTS)
-    for folder in folders:
-        output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
-        evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
-        
-        # test definition of property [1] based on these evaluations
-        similarity = test_property1(output_folder_og, output_folder_perturbed_path)
-        print(f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples")
+    
+    with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report:
+        for folder in folders:
+            output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
+            evaluate_folder(folder_with_gts=labels, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
+            
+            # test definition of property [1] based on these evaluations
+            similarity = test_property1(output_folder_og, output_folder_perturbed_path)
+            result = f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples"
+            print(result)
+            report.write(result)
 
