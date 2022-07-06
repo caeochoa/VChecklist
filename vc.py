@@ -97,6 +97,7 @@ def perturb(images, config=None, nnunet=False):
     else:
         for image_path in images:
             im = SampleImage3D(image_path)
+            print(f"Applying configuration to {os.path.split(image_path)[1]}")
             im.apply_config(os.path.abspath(config), save_config=image_path==images[0], nnunet=nnunet) # this should save the config only if using the first image
 
             
