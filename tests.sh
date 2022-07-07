@@ -17,12 +17,12 @@ rsync -u /home/s2259310/VChecklist/nn-UNet/models.zip /disk/scratch/s2259310
 unzip -u /disk/scratch/s2259310/models.zip -d /disk/scratch/s2259310/
 echo Done!
 
-echo Testing original shell script
+#echo Testing original shell script
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
-nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task501_BraTS2021/ -o /disk/scratch/s2259310/outputs/PredictTest -t 1 -m 3d_fullres
+#nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task501_BraTS2021495/ -o /disk/scratch/s2259310/outputs/PredictTest -t 1 -m 3d_fullres
 
 echo Testing Predict function
-python tests.py -t PredictTest -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task501_BraTS2021/ -o /disk/scratch/s2259310/outputs/PredictTest
+python tests.py -t PredictTest -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task501_BraTS2021495/ -o /disk/scratch/s2259310/outputs/PredictTest
 
 echo All done!

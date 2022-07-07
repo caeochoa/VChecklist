@@ -2,8 +2,8 @@ from ImageMods.image_processing import SampleImage3D
 from vc import load_images, predict
 import argparse
 
-def SampleImageTest():
-    im = SampleImage3D("/Users/caeochoa/Documents/GUH20/VChecklist/nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/BraTS2021_00495/imagesTs/BraTS2021_00495_0000.nii.gz")
+def SampleImageTest(input_folder):
+    im = SampleImage3D(input_folder)
     im.apply_config("ImageMods/configs/test.csv", save_config=True, nnunet=True)
 
     return True
@@ -27,10 +27,10 @@ if __name__ == "__main__":
 
     available_tests = ["SampleImageTest", "PredictTest"]
 
-    if args.test == "SampleImageTest" or "0":
-        SampleImageTest()
+    if args.test == "SampleImageTest" or args.test == "0":
+        SampleImageTest(args.input_folder)
         print("SampleImageTest worked!")
-    if args.test == "PredictTest" or "1":
+    if args.test == "PredictTest" or args.test == "1":
         PredictTest(args.input_folder, args.output_folder)
         print("PredictTest worked!")
     else:
