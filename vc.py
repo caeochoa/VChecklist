@@ -25,8 +25,8 @@ def load_images(data_path):
     all_files = [file for file in os.listdir(data_path) if os.path.isfile(os.path.join(data_path, file))]
 
     for file in all_files:
-        assert file.split(".")[-2:] == ["nii", "gz"], f"Make sure all files are the right format (format is {file})"
-
+        if not file.split(".")[-2:] == ["nii", "gz"]: # Make sure all files are the right format (format is {file})"
+            all_files.pop(all_files.index(file))
     ### finally, return a list with the path of each file
 
     return [os.path.join(data_path, file) for file in all_files]
