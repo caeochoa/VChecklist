@@ -191,7 +191,6 @@ class SampleImage3D():
                         perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]] = np.rot90(perturbed[x:x+self.PATCH_SIZE[0], y:y+self.PATCH_SIZE[1], z:z+self.PATCH_SIZE[2]], k=k)
 
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
-        print(["rr", int(proportion)*100, k])
         self.applied_perturbations.append(["rr", int(proportion*100), int(k)])
         
     
