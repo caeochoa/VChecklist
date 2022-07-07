@@ -21,12 +21,12 @@ echo Converting data...
 python nn-UNet/convert_data.py /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021
 echo Done!
 
-echo Testing original shell script
+#echo Testing original shell script
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
-nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/original_script -t 1 -m 3d_fullres
+#nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/original_script -t 1 -m 3d_fullres
 
 echo Testing Predict function
-python tests.py -t PredictTest -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task501_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictTest
+python tests.py -t PredictTest -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictTest
 
 echo All done!
