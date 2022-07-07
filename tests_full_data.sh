@@ -26,7 +26,7 @@ export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
 #nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/original_script -t 1 -m 3d_fullres
 
-echo Testing Predict function
-python tests.py -t PredictTest -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictTest
+echo Testing PredictPerturb function
+python tests.py -t PredictPerturbTest -c /home/s2259310/VChecklist/ImageMods/configs/basic.csv -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictPerturbTest
 
 echo All done!
