@@ -46,15 +46,15 @@ if __name__ == "__main__":
     output_folder = os.path.abspath(args.output_folder)
     config_path = os.path.abspath(args.config)
 
-    available_tests = ["SampleImageTest", "PredictTest"]
+    available_tests = ["SampleImageTest", "PredictTest", "PredictPerturbTest"]
 
     if args.test == "SampleImageTest" or args.test == "0":
         SampleImageTest(input_folder, config_path)
         print("SampleImageTest worked!")
-    if args.test == "PredictTest" or args.test == "1":
+    elif args.test == "PredictTest" or args.test == "1":
         PredictTest(input_folder, output_folder)
         print("PredictTest worked!")
-    if args.test == "PredictPerturbTest" or args.test == "2":
+    elif args.test == "PredictPerturbTest" or args.test == "2":
         PredictPerturbTest(input_folder, output_folder, config_path)
         print("PredictPerturbTest worked!")
     else:
