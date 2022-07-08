@@ -8,9 +8,9 @@ rm -r /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2
 mkdir /disk/scratch/s2259310 /disk/scratch/s2259310/nnUNet_raw_data_base /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
 rsync -u nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/data.zip /disk/scratch/s2259310
 #unzip -u /disk/scratch/s2259310/data.zip -d /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
-for i in (seq -f "%05g" $1 $2)
+for i in $(seq -f "%05g" $1 $2)
 do
-    unzip -u /disk/scratch/s2259310/data.zip RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021/BraTS2021_${i} -d /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
+    unzip -u /disk/scratch/s2259310/data.zip RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021/BraTS2021_${i}/* -d /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
 done
 echo Done!
 
@@ -31,7 +31,7 @@ export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
 #nnUNet_predict -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/original_script -t 1 -m 3d_fullres
 
-echo Testing PredictPerturb function
-python tests.py -t PredictPerturbTest -c /home/s2259310/VChecklist/ImageMods/configs/basic.csv -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictPerturbTest
+echo Testing ${3} function
+python tests.py -t ${3} -c /home/s2259310/VChecklist/ImageMods/configs/basic.csv -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021/PredictPerturbTest
 
 echo All done!
