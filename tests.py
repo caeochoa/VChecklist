@@ -1,7 +1,7 @@
 from ImageMods.image_processing import SampleImage3D
-from vc import load_images, perturb, predict
-import argparse
-import os
+from vc import load_images, perturb, predict, compare_sample
+import argparse, os, json
+import numpy as np
 
 def SampleImageTest(input_folder, config_path):
     im = SampleImage3D(input_folder)
@@ -31,6 +31,29 @@ def PredictPerturbTest(input_folder, output_folder, config_path):
         input_folder_perturbed_path = os.path.join(input_folder_perturbed, folder)
         output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
         predict(input_folder_perturbed_path, output_folder_perturbed_path)
+
+def Property1Test(output_folder_og, output_folder_perturbed_path):
+
+    eval_og_csv = os.path.join(output_folder_og, "summary.json")
+    eval_pert_csv = os.path.join(output_folder_perturbed_path, "summary.json")
+
+    with open(eval_og_csv) as file:
+        eval_og = json.load(file)
+    
+    with open(eval_pert_csv) as file:
+        eval_pert = json.load(file)
+    
+    assert len(eval_og["results"]["all"]) == len(eval_pert["results"]["all"]), f"The number of samples is different between original and perturbed folders"
+    
+    eval_difference = []
+    for sample in range(len(eval_og_csv["results"]["all"])):
+        eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, "Accuracy") for label in (0,1,2,4)])
+    
+    eval_difference = np.array(eval_difference)
+    avg_accuracy = np.mean(eval_difference, axis=1)
+    similarity = avg_accuracy[avg_accuracy <= 0.01].shape[0]/avg_accuracy.shape[0]*100
+
+    return similarity
 
 
 if __name__ == "__main__":

@@ -145,19 +145,19 @@ def compare_sample(dict1, dict2, sample, label, criteria):
 
 def test_property1(output_folder_og, output_folder_perturbed_path):
 
-    eval_og_csv = os.path.join(output_folder_og, "summary.json")
-    eval_pert_csv = os.path.join(output_folder_perturbed_path, "summary.json")
+    eval_og_json = os.path.join(output_folder_og, "summary.json")
+    eval_pert_json = os.path.join(output_folder_perturbed_path, "summary.json")
 
-    with open(eval_og_csv) as file:
+    with open(eval_og_json) as file:
         eval_og = json.load(file)
     
-    with open(eval_pert_csv) as file:
+    with open(eval_pert_json) as file:
         eval_pert = json.load(file)
     
     assert len(eval_og["results"]["all"]) == len(eval_pert["results"]["all"]), f"The number of samples is different between original and perturbed folders"
     
     eval_difference = []
-    for sample in range(len(eval_og_csv["results"]["all"])):
+    for sample in range(len(eval_og["results"]["all"])):
         eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, "Accuracy") for label in (0,1,2,4)])
     
     eval_difference = np.array(eval_difference)
