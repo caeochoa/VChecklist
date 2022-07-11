@@ -12,9 +12,14 @@ nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/
 models.zip
 nn-UNet/models.zip
 
+nn-UNet/disk/
+nn-UNet/outputs/Task500_BraTS2021/
+nn-UNet/outputs.zip
+
 # .out slurm files
 **/slurm-*.out
 **/*.cpython-310.pyc
+interesting_logs_maybe/
 
 # classic gitignore stuff
 

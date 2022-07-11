@@ -2,6 +2,8 @@
 source /home/s2259310/.bashrc
 conda activate dissertation
 
+echo $(nvidia-smi)
+
 echo Compressing and copying all data
 #zip -ru BraTS2021_00495.zip nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/BraTS2021_00495/imagesTs
 rm -r /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021

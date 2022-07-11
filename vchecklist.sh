@@ -11,7 +11,7 @@ cd nn-UNet
 zip -ru models.zip nnUNet_trained_models
 cd ..
 rsync -u /home/s2259310/VChecklist/nn-UNet/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/data/data.zip /disk/scratch/s2259310
-rsync -u /home/s2259310/VChecklist/ImageMods/configs/test.csv /disk/scratch/s2259310/test_config.csv
+rsync -u /home/s2259310/VChecklist/ImageMods/configs/basic.csv /disk/scratch/s2259310/basic_config.csv
 rsync -u /home/s2259310/VChecklist/nn-UNet/models.zip /disk/scratch/s2259310
 echo Done!
 echo Decompressing data...
@@ -26,7 +26,7 @@ echo Done!
 echo Running vc.py
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
-python vc.py -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021 -c /disk/scratch/s2259310/test_config.csv
+python vc.py -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/outputs/Task500_BraTS2021 -c /disk/scratch/s2259310/basic_config.csv
 echo Done!!!! 
 
 echo Compressing outputs and copying them to home directory
