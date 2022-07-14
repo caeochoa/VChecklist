@@ -31,7 +31,7 @@ then
     cd /disk/scratch/s2259310
     xargs mkdir -p < output_dirs.txt
     cd /home/s2259310/VChecklist
-
+fi
 
 echo Running vc.py
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
