@@ -171,16 +171,19 @@ def write_report(output_folder_perturbed, labels_perturbed, output_folder_og):
 
     folders = [folder for folder in os.listdir(output_folder_perturbed) if not os.path.isfile(os.path.join(output_folder_perturbed, folder))]
 
+    report = []
+    for folder in folders:
+        output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
+        evaluate_folder(folder_with_gts=labels_perturbed, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
+        
+        # test definition of property [1] based on these evaluations
+        similarity = test_property1(output_folder_og, output_folder_perturbed_path)
+        result = f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples"
+        print(result)
+        report.append(result)
+
     with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report:
-        for folder in folders:
-            output_folder_perturbed_path = os.path.join(output_folder_perturbed, folder)
-            evaluate_folder(folder_with_gts=labels_perturbed, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
-            
-            # test definition of property [1] based on these evaluations
-            similarity = test_property1(output_folder_og, output_folder_perturbed_path)
-            result = f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples"
-            print(result)
-            report.write(result)
+        report.write("\n".join(result))
 
     
 

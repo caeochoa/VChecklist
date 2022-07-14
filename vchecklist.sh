@@ -5,6 +5,21 @@ conda activate dissertation
 echo Creating directories...
 mkdir /disk/scratch/s2259310 /disk/scratch/s2259310/nnUNet_raw_data_base /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
 
+echo Copying output folder structure...
+if [ -d "nn-UNet/outputs" ]
+then
+    cd nn-UNet/outputs
+    find outputs -type d > /disk/scratch/s2259310/output_dirs.txt
+    cd /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
+    xargs mkdir -p < /disk/scratch/s2259310/output_dirs.txt
+    cd /disk/scratch/s2259310/
+    mkdir outputs
+    cd outputs
+    xargs mkdir -p < /disk/scratch/s2259310/output_dirs.txt
+    cd /home/s2259310/VChecklist
+fi
+
+
 echo Copying data...
 #zip -r data.zip nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
 cd nn-UNet
@@ -22,16 +37,6 @@ echo Done!
 echo Converting data...
 python nn-UNet/convert_data.py /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/RSNA_ASNR_MICCAI_BraTS2021_TrainingData_16July2021
 echo Done!
-
-echo Copying output folder structure...
-if [ -d "nn-UNet/outputs" ]
-then
-    cd nn-UNet
-    find outputs -type d > /disk/scratch/s2259310/output_dirs.txt
-    cd /disk/scratch/s2259310
-    xargs mkdir -p < output_dirs.txt
-    cd /home/s2259310/VChecklist
-fi
 
 echo Running vc.py
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
