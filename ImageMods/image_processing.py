@@ -226,13 +226,16 @@ class SampleImage3D():
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
         self.applied_perturbations.append(["or", int(proportion*100), int(k)])
 
-    def save(self, path=None, filename=None, nnunet=False, save_config=True):
-        if not path:
-            path = "/".join(self.image_path.split("/")[:-1])
-        if not filename:
-            filename = self.image_path.split("/")[-1].split(".")[0]
+    def save(self, path=None, nnunet=False, save_config=True):
+
+        if path:
+            path, filename = os.path.split(path)
+            filename = filename.split(".")[0]
+        else:
+            path, filename = os.path.split(self.image_path)
+            path = os.path.join(path, "perturbed")
+            filename = filename.split(".")[0]
             
-        path = os.path.join(path, "perturbed")
 
         try:
             print(f"Creating directory {path}")
@@ -270,7 +273,8 @@ class SampleImage3D():
                 for pert in self.applied_perturbations:
                     writer.writerow({f"{pert[0]}":f"{pert[1]/100},{pert[2]}"})
     
-    def apply_config(self, path, save=True, save_config=False, nnunet = False):
+    def load_config(self, path):
+
         with open(path, mode="r") as csvfile:
             csv_reader = csv.DictReader(csvfile, delimiter=";")
             self.config = {"rr":[],"cr":[],"or":[]}
@@ -279,6 +283,13 @@ class SampleImage3D():
                     p = row[pert].split(",")
                     if len(p) > 0 and (p[0] != "" and p[1] != ""):
                         self.config[pert].append([float(x) for x in p])
+            
+    
+    
+    def apply_config(self, path, save=True, save_config=False, nnunet = False):
+        
+        if path:
+            self.load_config(path)
         
         print("Applying the following configuration:", self.config)
         

@@ -45,48 +45,38 @@ def perturb(images, config=None, nnunet=False):
     # perturb each of them with the same configuration (manually chosen once, or based on config file)
     ## mode will establish wether the config is chosen manually once or on config file
 
+    if "perturbed" in os.listdir(os.path.dirname(images[0])):
+        pert_path = os.path.join(os.path.dirname(images[0]), "perturbed")
+        applied_perts = [folder for folder in os.listdir(os.path.dirname(pert_path)) if not os.path.isfile(os.path.join(os.path.dirname(pert_path), folder))]
+
     if not config:
         im = SampleImage3D(images[0])
         
         pert = "-"
         while pert != "":
-            pert = input("Type of perturbation (rr, cr, or) - leave blank to continue:")
-            if pert == "rr":
-                try:
-                    conf = []
-                    prop = input("Introduce proportion of perturbed patches (0-1):")
-                    assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
-                    conf.append(float(prop))
-                    k = input("Introduce angle of perturbation (multiple of 90):")
-                    assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(float(k)//90)
-                    im.random_rotation(conf[0], conf[1])
-                except AssertionError:
-                    continue
-            if pert == "cr":
-                try:
-                    conf = []
-                    prop = input("Introduce proportion of perturbed patches (0-1):")
-                    assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
-                    conf.append(float(prop))
-                    k = input("Introduce angle of perturbation (multiple of 90):")
-                    assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(float(k)//90)
-                    im.central_rotation(conf[0], conf[1])
-                except AssertionError:
-                    continue
-            if pert == "or":
-                try:
-                    conf = []
-                    prop = input("Introduce proportion of perturbed patches (0-1):")
-                    assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
-                    conf.append(float(prop))
-                    k = input("Introduce angle of perturbation (multiple of 90):")
-                    assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    conf.append(float(k)//90)
-                    im.outer_rotation(conf[0], conf[1])
-                except AssertionError:
-                    continue
+
+            try:
+                pert = input("Type of perturbation (rr, cr, or) - leave blank to continue:")
+                assert pert in ["rr", "cr", "or"], "Type of perturbation has to be one of rr (Random Rotation), cr (Central Rotation) and or (Outer Rotation)"
+                conf = []
+                prop = input("Introduce proportion of perturbed patches (0-1):")
+                assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
+                conf.append(float(prop))
+                k = input("Introduce angle of perturbation (multiple of 90):")
+                assert float(k)%90 == 0, "Angle has to be a multiple of 90"
+                conf.append(float(k)//90)
+
+                if f"{pert}-{int(conf[0]*100)}-{conf[1]}" not in applied_perts:
+                    if pert == "rr":
+                        im.random_rotation(conf[0], conf[1])
+                    if pert == "cr":
+                        im.central_rotation(conf[0], conf[1])
+                    if pert == "or":
+                        im.outer_rotation(conf[0], conf[1])
+            
+            except AssertionError:
+                continue
+
         im.save(nnunet=nnunet) # save in nnunet format, and save the config file
         images_path, filename = os.path.split(images[0])
         config_path = os.path.join(os.path.join(images_path, "perturbed"), filename.split(".")[0] + "_perturbation_configs.csv")
@@ -97,6 +87,14 @@ def perturb(images, config=None, nnunet=False):
     else:
         for image_path in images:
             im = SampleImage3D(image_path)
+            if image_path == images[0]:
+                im.load_config(os.path.abspath(config))
+                for pert in im.config.keys():
+                    for conf in im.config[pert]:
+                        if f"{pert}-{int(conf[0]*100)}-{conf[1]}" in applied_perts:
+                            print(f"{pert}-{int(conf[0]*100)}-{conf[1]} already performed on this dataset")
+                            im.config[pert].pop(im.config[pert].index(conf))
+
             print(f"Applying configuration to {os.path.split(image_path)[1]}")
             im.apply_config(os.path.abspath(config), save_config=image_path==images[0], nnunet=nnunet) # this should save the config only if using the first image
 
@@ -129,10 +127,12 @@ def predict(input_folder, output_folder):
     model_folder_name = os.path.join(network_training_output_dir, model, task_name, trainer + "__" +
                               default_plans_identifier)
 
-    predict_from_folder(model=model_folder_name, input_folder=input_folder, output_folder=output_folder, folds=folds, save_npz=save_npz,
-                        num_threads_preprocessing=num_threads_preprocessing, num_threads_nifti_save=num_threads_nifti_save,
-                        lowres_segmentations=lowres_segmentations, part_id=part_id, num_parts=num_parts, tta=tta, mixed_precision=mixed_precision,
-                        overwrite_existing=overwrite_existing, mode=mode , overwrite_all_in_gpu=overwrite_all_in_gpu, step_size=step_size)
+    if not os.path.exists(output_folder):
+
+        predict_from_folder(model=model_folder_name, input_folder=input_folder, output_folder=output_folder, folds=folds, save_npz=save_npz,
+                            num_threads_preprocessing=num_threads_preprocessing, num_threads_nifti_save=num_threads_nifti_save,
+                            lowres_segmentations=lowres_segmentations, part_id=part_id, num_parts=num_parts, tta=tta, mixed_precision=mixed_precision,
+                            overwrite_existing=overwrite_existing, mode=mode , overwrite_all_in_gpu=overwrite_all_in_gpu, step_size=step_size)
 
 # evaluate each of these against true labels
 # test definition of property [1] based on these evaluations
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", help="The path to the input data to perturb and feed the model")
     parser.add_argument("-o", "--output", help="The path to save the output of the model for the original and perturbed data.")
     parser.add_argument("-c", "--config", help="Choose configuration file for perturbation.")
-    parser.add_argument("-p", "--perturb_labels", help="A flag that establishes that labels should be perturbed too.", action="store_true")
+    parser.add_argument("-l", "--perturb_labels", help="A flag that establishes that labels should be perturbed too.", action="store_true")
     args = parser.parse_args()
 
     data_path = args.input
