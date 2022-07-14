@@ -4,7 +4,7 @@ conda activate dissertation
 
 echo Creating directories...
 mkdir /disk/scratch/s2259310 /disk/scratch/s2259310/nnUNet_raw_data_base /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
-
+rm -r /disk/scratch/s2259310/outputs /disk/scratch/s2259310/outputs.zip
 echo Copying output folder structure...
 if [ -d "nn-UNet/outputs" ]
 then
