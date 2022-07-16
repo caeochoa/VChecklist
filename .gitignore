@@ -15,6 +15,9 @@ nn-UNet/models.zip
 nn-UNet/disk/
 nn-UNet/outputs/Task500_BraTS2021/
 nn-UNet/outputs.zip
+nn-UNet/survey_prep
+nn-UNet/survey_prep.zip
+nn-UNet/input_images.zip
 
 # .out slurm files
 **/slurm-*.out
