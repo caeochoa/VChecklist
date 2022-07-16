@@ -226,7 +226,7 @@ class SampleImage3D():
         self.perturbed = np.append(self.perturbed, np.expand_dims(perturbed, 0), 0)
         self.applied_perturbations.append(["or", int(proportion*100), int(k)])
 
-    def save(self, path=None, nnunet=False, save_config=True):
+    def save(self, path=None, save_config=True):
 
         if path:
             path, filename = os.path.split(path)
@@ -286,7 +286,7 @@ class SampleImage3D():
             
     
     
-    def apply_config(self, path, save=True, save_config=False, nnunet = False):
+    def apply_config(self, path, save=True, save_config=False):
         
         if path:
             self.load_config(path)
@@ -304,7 +304,7 @@ class SampleImage3D():
                         self.outer_rotation(conf[0], conf[1])
         
         if save:
-            self.save(nnunet=nnunet, save_config=save_config)
+            self.save(save_config=save_config)
                 
                 
         
