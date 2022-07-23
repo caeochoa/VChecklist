@@ -8,11 +8,11 @@ def perturb(images):
 
     for image_path in images:
         image = SampleImage3D(image_path)
-        for prop in range(100):
+        for prop in range(10):
             for angle in [1,2,3]:
-                image.random_rotation(prop/100, angle)
-                image.central_rotation(prop/100, angle)
-                image.outer_rotation(prop/100, angle)
+                image.random_rotation(prop/10, angle)
+                image.central_rotation(prop/10, angle)
+                image.outer_rotation(prop/10, angle)
         image.save()
 
 

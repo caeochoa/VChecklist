@@ -143,7 +143,7 @@ def compare_mean(dict1, dict2, label, criteria):
 def compare_sample(dict1, dict2, sample, label, criteria):
     return dict1["results"]["all"][sample][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
 
-def test_property1(output_folder_og, output_folder_perturbed_path):
+def test_property1(output_folder_og, output_folder_perturbed_path, criteria):
 
     eval_og_json = os.path.join(output_folder_og, "summary.json")
     eval_pert_json = os.path.join(output_folder_perturbed_path, "summary.json")
@@ -158,13 +158,16 @@ def test_property1(output_folder_og, output_folder_perturbed_path):
     
     eval_difference = []
     for sample in range(len(eval_og["results"]["all"])):
-        eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, "Accuracy") for label in (0,1,2,4)])
+        eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, criteria) for label in (0,1,2,4)])
     
     eval_difference = np.array(eval_difference)
-    avg_accuracy = np.mean(eval_difference, axis=1)
-    similarity = avg_accuracy[avg_accuracy <= 0.01].shape[0]/avg_accuracy.shape[0]*100
+    avg_diff = np.abs(np.mean(eval_difference, axis=1))
+    similarity = avg_diff[avg_diff <= 0.01].shape[0]/avg_diff.shape[0]*100
+    
+    # means = [np.mean(np.array([dic["results"]["mean"][str(label)][criteria] for label in (0,1,2,4)])) for dic in [eval_og, eval_pert]]
+    means = np.mean(np.abs(np.array([compare_mean(eval_og, eval_pert, label, criteria) for label in (0,1,2,4)])))
 
-    return similarity
+    return similarity, means
     
 
 def write_report(output_folder_perturbed, labels_perturbed, output_folder_og):
@@ -177,13 +180,13 @@ def write_report(output_folder_perturbed, labels_perturbed, output_folder_og):
         evaluate_folder(folder_with_gts=labels_perturbed, folder_with_predictions=output_folder_perturbed_path, labels = (0,1,2,4))
         
         # test definition of property [1] based on these evaluations
-        similarity = test_property1(output_folder_og, output_folder_perturbed_path)
-        result = f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples"
+        similarity, means = test_property1(output_folder_og, output_folder_perturbed_path, "Dice")
+        result = f"For configuration {folder}, {similarity}% of perturbed samples show behaviour that agrees with original samples. (Mean: {means})"
         print(result)
         report.append(result)
 
-    with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report:
-        report.write("\n".join(result))
+    with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report_file:
+        report_file.write("\n".join(report))
 
     
 
