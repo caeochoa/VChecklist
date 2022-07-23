@@ -35,6 +35,7 @@ MEDIA_ROOT = "/Users/caeochoa/Documents/GUH20/VChecklist/visionchecklist/interfa
 # Application definition
 
 INSTALLED_APPS = [
+    'survey.apps.SurveyConfig',
     'interface.apps.InterfaceConfig',
     'django.contrib.admin',
     'django.contrib.auth',

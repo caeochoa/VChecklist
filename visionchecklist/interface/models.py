@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='images/')
+    image = models.FileField(upload_to='images/')
     pub_date = models.DateTimeField('date published')
 
     def __str__(self) -> str:
@@ -27,7 +27,7 @@ class Parameter(models.Model):
         A3 = 3, _('270º')
     
     image = models.ForeignKey(Image, on_delete=models.CASCADE)
-    patch_size = models.IntegerField() # PATCH_SIZE (INT)
+    #patch_size = models.IntegerField() # PATCH_SIZE (INT)
     rotation_distribution = models.CharField(max_length=1, choices=RotationDist.choices, default=RotationDist.RANDOM) # Distribution of rotation (Choice)
     rot_proportion = models.FloatField('Rotation proportion') # Proportion (Float/int)
     angle = models.IntegerField(choices=Angle.choices, default=Angle.A0) # Angle (INT Choice)
