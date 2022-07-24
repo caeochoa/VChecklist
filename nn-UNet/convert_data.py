@@ -23,7 +23,7 @@ def try_mkdir(new_dir):
 if __name__ == "__main__":
 
     ## argparse
-    parser = argparse.ArgumentParser(description="Converts data from BraTS_2021 organisation format to a nn_UNet readable formar")
+    parser = argparse.ArgumentParser(description="Converts data from BraTS_2021 organisation format to a nn_UNet readable format")
     parser.add_argument("dir", help="Path to folder with the data")
     args = parser.parse_args()
 
