@@ -1,0 +1,34 @@
+<form action="{% url 'interface:image' input_image.id%}">
+    <fieldset>
+        <h3>Perturbed input:</h3>
+        <img src="{{input_image.image.url}}"><br>
+        <h3>Output:</h3>
+        <img src="{{output_image.image.url}}"><br>
+        <p> The behaviour of the model with this perturbation
+            {% if output_image.result %}
+                <b id="agree"> agrees </b>
+            {% else %}
+                <b id="disagree">disagrees</b>
+            {% endif %}
+            with the behaviour of the model with the original image. </p> <br>
+        <p> Dice score of the model with perturbed image: {{output_image.dice_score}}</p>
+        <p> Dice score of the model with perturbed image: {{output_image.og_dice_score}}</p>
+        {% comment %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p><br>{% endif %}
+        {% for mode in input_image.RotationDist.choices %}
+            <input type="radio" name="mode" id="mode{{ forloop.counter }}" value="{{ mode.0 }}">
+            <label for="mode{{ forloop.counter }}">{{ mode.1 }}</label>
+        {% endfor %}
+        <br>
+        {% for angle in input_image.Angle.choices %}
+            <input type="radio" name="angle" id="angle{{ forloop.counter }}" value="{{ angle.0 }}">
+            <label for="angle{{ forloop.counter }}">{{ angle.1 }}</label>
+        {% endfor %}
+        <br>
+        <label for="prop">Proportion of patches rotated</label>
+        <input type="number" name="prop" id="prop" min="0" max="100" step="10" value="50"> {% endcomment %}
+        
+
+    </fieldset>
+    <input type="submit" value="Go back">
+    </form>

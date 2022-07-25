@@ -1,0 +1,22 @@
+<form action="{% url 'interface:select' %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <img src="{{image.image.url}}"><br>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p><br>{% endif %}
+        {% for mode in image.RotationDist.choices %}
+            <input type="radio" name="mode" id="mode{{ forloop.counter }}" value="{{ mode.0 }}">
+            <label for="mode{{ forloop.counter }}">{{ mode.1 }}</label>
+        {% endfor %}
+        <br>
+        {% for angle in image.Angle.choices %}
+            <input type="radio" name="angle" id="angle{{ forloop.counter }}" value="{{ angle.0 }}">
+            <label for="angle{{ forloop.counter }}">{{ angle.1 }}</label>
+        {% endfor %}
+        <br>
+        <label for="prop">Proportion of patches rotated</label>
+        <input type="number" name="prop" id="prop" min="0" max="100" step="10" value="50">
+        
+
+    </fieldset>
+    <input type="submit" value="Apply">
+    </form>
