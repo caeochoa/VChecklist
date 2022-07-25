@@ -34,5 +34,6 @@ class Output(models.Model):
     input = models.ForeignKey(Image, on_delete=models.CASCADE)
     out_image = models.FileField(upload_to='images/', default=None)
     result = models.IntegerField(default=0)
+    mean_diff = models.FloatField(default=0)
     dice_score = models.FloatField()
     og_dice_score = models.FloatField()
