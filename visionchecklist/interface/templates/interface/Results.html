@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'interface/style.css' %}">
 <form action="{% url 'interface:image' 1%}">
     <fieldset>
         <h3>Perturbed input:</h3>
@@ -11,8 +13,8 @@
                 <b id="disagree">disagrees</b>
             {% endif %}
             with the behaviour of the model with the original image. </p> <br>
-        <p> Dice score of the model with perturbed image: {{output_image.dice_score}}</p>
-        <p> Dice score of the model with original image: {{output_image.og_dice_score}}</p>
+        <p> Dice score of the model with perturbed image: {{output_image.dice_score | floatformat:3}}</p>
+        <p> Dice score of the model with original image: {{output_image.og_dice_score|floatformat:3}}</p>
         {% comment %}
         {% if error_message %}<p><strong>{{ error_message }}</strong></p><br>{% endif %}
         {% for mode in input_image.RotationDist.choices %}
