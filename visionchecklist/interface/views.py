@@ -23,7 +23,12 @@ def ResultsView(request, mode, prop, angle):
 
 
 def select(request):
-    return HttpResponseRedirect(reverse('interface:results', args=(request.POST['mode'], request.POST['prop'], request.POST['angle'])))
+    if len(request.POST) < 4:
+        return render(request, 'interface/Home.html', {'image':Image.objects.get(pk=1), 'error_message': "You need to select a configuration"})
+    elif request.POST['angle'] == '0':
+        return HttpResponseRedirect(reverse('interface:results', args=('R', 0, 0)))
+    else:
+        return HttpResponseRedirect(reverse('interface:results', args=(request.POST['mode'], request.POST['prop'], request.POST['angle'])))
     image = get_object_or_404(Image, pk=request.POST[''])
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
