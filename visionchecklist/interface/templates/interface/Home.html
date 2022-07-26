@@ -4,12 +4,12 @@
         <img src="{{image.image.url}}"><br>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p><br>{% endif %}
         {% for mode in image.RotationDist.choices %}
-            <input type="radio" name="mode" id="mode{{ forloop.counter }}" value="{{ mode.0 }}">
+            <input type="radio" name="mode" id="mode{{ forloop.counter }}" value="{{ mode.0 }}" {% if forloop.first %} checked {% endif %}>
             <label for="mode{{ forloop.counter }}">{{ mode.1 }}</label>
         {% endfor %}
         <br>
         {% for angle in image.Angle.choices %}
-            <input type="radio" name="angle" id="angle{{ forloop.counter }}" value="{{ angle.0 }}">
+            <input type="radio" name="angle" id="angle{{ forloop.counter }}" value="{{ angle.0 }}" {% if forloop.first %} checked {% endif %}>
             <label for="angle{{ forloop.counter }}">{{ angle.1 }}</label>
         {% endfor %}
         <br>
