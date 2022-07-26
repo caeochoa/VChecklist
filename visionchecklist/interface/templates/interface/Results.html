@@ -1,6 +1,6 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'interface/style.css' %}">
-<form action="{% url 'interface:image' 1%}">
+<form action="{% url 'interface:image' %}">
     <fieldset>
         <h3>Perturbed input:</h3>
         <img src="{{input_image.image.url}}"><br>
