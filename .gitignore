@@ -20,6 +20,9 @@ nn-UNet/survey_prep.zip
 nn-UNet/input_images.zip
 survey_prep
 survey_prep.zip
+"Vision Checklist"
+"Vision Checklist.zip"
+
 
 # .out slurm files
 **/slurm-*.out
