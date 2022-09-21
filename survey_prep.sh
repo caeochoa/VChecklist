@@ -3,8 +3,9 @@ source /home/s2259310/.bashrc
 conda activate dissertation
 
 echo Creating directories...
+rm -r /disk/scratch/s2259310/nnUNet_raw_data_base
 mkdir /disk/scratch/s2259310 /disk/scratch/s2259310/nnUNet_raw_data_base /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
-rm -r /disk/scratch/s2259310/outputs /disk/scratch/s2259310/outputs.zip
+rm -r /disk/scratch/s2259310/outputs /disk/scratch/s2259310/outputs.zip 
 
 echo Copying data...
 #zip -r data.zip nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021
@@ -38,7 +39,7 @@ zip -r input_images.zip images labels
 rsync /disk/scratch/s2259310/outputs.zip /home/s2259310/VChecklist/nn-UNet/
 rsync /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/input_images.zip /home/s2259310/VChecklist/nn-UNet/
 mkdir /home/s2259310/VChecklist/nn-UNet/outputs/survey_prep
-unzip -u /home/s2259310/VChecklist/nn-UNet/outputs.zip -d /home/s2259310/VChecklist/nn-UNet/survey_prep
-unzip -u /home/s2259310/VChecklist/nn-UNet/input_images.zip -d /home/s2259310/VChecklist/nn-UNet/outputs/survey_prep
+unzip /home/s2259310/VChecklist/nn-UNet/outputs.zip -d /home/s2259310/VChecklist/nn-UNet/survey_prep
+unzip /home/s2259310/VChecklist/nn-UNet/input_images.zip -d /home/s2259310/VChecklist/nn-UNet/outputs/survey_prep
 
 echo All done!! Good job!!
