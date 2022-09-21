@@ -18,6 +18,8 @@ nn-UNet/outputs.zip
 nn-UNet/survey_prep
 nn-UNet/survey_prep.zip
 nn-UNet/input_images.zip
+survey_prep
+survey_prep.zip
 
 # .out slurm files
 **/slurm-*.out
