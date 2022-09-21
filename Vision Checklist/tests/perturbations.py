@@ -1,11 +1,13 @@
 import numpy as np
 from scipy.ndimage import zoom
+import patches
 
 class TestType():
 
-    def __init__(self) -> None:
+    def __init__(self, patch_selection:function, perturbation:function) -> None:
 
-        pass
+        self.patch_selection_function = patch_selection
+        self.perturbation_function = perturbation
     
     def apply(self, patches, probability, **kwargs):
 
@@ -21,11 +23,19 @@ class TestType():
 
         self.perturbed = perturbed
     
-    def patch_selection(self):
-        pass
+    def patch_selection(self, patches, probability):
+        if self.patch_selection_function:
+            select = self.patch_selection_function(patches, probability)
+            return select
+        else:
+            raise NotImplementedError
 
-    def perturbation(self):
-        pass
+    def perturbation(self, img, **kwargs):
+        if self.perturbation_function:
+            perturbed = self.perturbation_function(img, kwargs)
+            return perturbed
+        else:
+            raise NotImplementedError
 
 
 def rotation(img:np.ndarray, **kwargs):
