@@ -86,3 +86,6 @@
 # and on a a6000?
 
 sbatch --mail-type=END --mail-user=s2259310  --mem=14000 --cpus-per-task=4 --gres=gpu:a6000:1 -J Q4Perturbed tests_full_data.sh 112 150 PredictPerturbTest
+
+
+sbatch --mail-type=END --mail-user=s2259310  --mem=14000 --cpus-per-task=4 --gres=gpu:a6000:1 -J nnunet-basic nnunet-basic.sh
