@@ -1,0 +1,41 @@
+{
+  "CentralRotation": {
+    "TestType": {
+      "patch_selection_function": "Central",
+      "perturbation_function": "rotation"
+    },
+    "proportion": 1.0,
+    "degree": 1.0,
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  },
+  "CentralBlurr": {
+    "TestType": {
+      "patch_selection_function": "Central",
+      "perturbation_function": "blurr"
+    },
+    "proportion": 0.5,
+    "degree": 3.0,
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  },
+  "RandomRotation": {
+    "TestType": {
+      "patch_selection_function": "Random",
+      "perturbation_function": "rotation"
+    },
+    "proportion": 0.5,
+    "degree": 1.0,
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  }
+}

@@ -1,6 +1,37 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from . import convert_nifti
+import os
+import nibabel as nib
+
+class SampleImage():
+
+    def __init__(self, img_path) -> None:
+        
+        self.img_path = os.path.abspath(img_path)
+        self.filename = os.path.split(self.img_path)[1]
+        self.img, self.affine, self.header = convert_nifti.Nifti2Numpy(self.img_path) 
+        
+    def show_slices_multiple(self):
+        show_slices_multiple([central_slices(self.img)])
+        plt.show()
+    
+    def split_into_patches(self, patch_shape:tuple):
+        self.patch_shape = patch_shape
+        assert len(patch_shape) == len(self.img.shape), "Wrong number of dimensions for patch"
+        self.patches = split_into_patches(self.img, patch_shape)
+
+    def paste_patches(self):
+        self.out_img = paste_patches(self.patches)
+    
+    def save_img(self, out_path, out_img=None):
+        if not out_img:
+            out_img = self.out_img
+        nifti = convert_nifti.Numpy2Nifti(out_img, self.affine, self.header)
+        nib.save(nifti, os.path.join(out_path, self.filename))
+        
+
 
 def show_slices_multiple(list_of_slices):
     fig, axes = plt.subplots(1, len(list_of_slices[0]), figsize=(10,5))
@@ -79,7 +110,17 @@ def pad_selection(patches:np.ndarray, selection:np.ndarray, axis, value=0):
     selection = np.append(selection, np.full(shape, value), axis)
     return selection.astype(np.bool8)
 
-def CentralPatchSelection(patches:np.ndarray, probability:float):
+def patch_selection_intersection(select:np.ndarray):
+    new_select = np.zeros((select.shape[0],select.shape[1],select.shape[2]), np.bool8)
+    for i in range(select.shape[0]):
+        for j in range(select.shape[1]):
+            for k in range(select.shape[2]):
+                if np.any(select[i,j,k]):
+                    new_select[i,j,k] = True
+
+    return new_select
+
+def Central_PatchSelection(patches:np.ndarray, probability:float):
     selection = np.random.rand(patches.shape[0]//2,patches.shape[1]//2,patches.shape[2]//2)#, patches.shape[3], patches.shape[4], patches.shape[5])
     selection = selection <= probability
     for axis in range(len(selection.shape)):
@@ -91,11 +132,15 @@ def CentralPatchSelection(patches:np.ndarray, probability:float):
 
     return selection.astype(np.bool8)
 
-def OuterPatchSelection(patches:np.ndarray, probability:float):
+def Outer_PatchSelection(patches:np.ndarray, probability:float):
     selection = np.random.rand(patches.shape[0],patches.shape[1],patches.shape[2])
     selection = selection <= probability
-    centre = CentralPatchSelection(patches, 1) 
+    centre = Central_PatchSelection(patches, 1) 
     selection[centre] = 0
 
     return selection
 
+def Random_PatchSelection(patches:np.ndarray, probability:float):
+    select = np.random.rand(patches.shape[0], patches.shape[1], patches.shape[2])
+    select = select <= probability
+    return select.astype(np.bool8)
