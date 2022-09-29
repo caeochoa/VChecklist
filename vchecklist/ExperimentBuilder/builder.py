@@ -4,6 +4,7 @@ import os
 #from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
 #from nnunet.evaluation.evaluator import evaluate_folder
 import json
+from tabnanny import filename_only
 import numpy as np
 import tests.perturbations as perts
 import tests.patches as patches
@@ -36,41 +37,52 @@ class ExperimentBuilder():
             self.load_config(self.tests_config)
 
         else:
-            pert = "-"
-            self.tests = {}
-            while pert != "":
-                try:
-                    print("Type of perturbation - leave blank to continue:")
-                    print("Available options:", list(perts.TestType().pert_rules.keys()))
-                    pert = input("::")
-                    if pert == "":
-                        break
-                    assert pert in perts.TestType().pert_rules.keys(), "Input has to be in available perturbations"
-                    
-                    
-                    patch_shape = input("Introduce shape of patches. Each dimension should be separated by a comma. For example, if patch has 3 dimensions of size 50, input '50,50,50':")
-                    patch_shape = (int(a) for a in patch_shape.split(","))
-                    
-                    print("Introduce patch selection rule:")
-                    print("Options:", list(perts.TestType().ps_rules.keys()))
-                    selection = input("::")
-                    assert selection in perts.TestType().ps_rules.keys(), "Input has to be in available selection rules"
-
-                    prop = input("Introduce proportion of perturbed patches (0-1):")
-                    assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
-                    k = input("Introduce degree of perturbation:")
-                    #assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                    self.tests[selection.capitalize()+pert.capitalize()] = {"TestType":perts.TestType(patch_selection=selection, perturbation=pert), 
-                    "proportion":float(prop), "degree":float(k), "patch_shape":tuple(patch_shape)}
-                except AssertionError:
-                    continue
+            self.prompt_for_tests()
             
         if save_config:
             self.save_config()
         
 
+    def prompt_for_tests(self):
+        pert = "-"
+        self.tests = {}
+        while pert != "":
+            try:
+                print("Type of perturbation - leave blank to continue:")
+                print("Available options:", list(perts.TestType().pert_rules.keys()))
+                pert = input("::")
+                if pert == "":
+                    break
+                assert pert in perts.TestType().pert_rules.keys(), "Input has to be in available perturbations"
+                
+                
+                patch_shape = input("Introduce shape of patches. Each dimension should be separated by a comma. For example, if patch has 3 dimensions of size 50, input '50,50,50':")
+                patch_shape = (int(a) for a in patch_shape.split(","))
+                
+                print("Introduce patch selection rule:")
+                print("Options:", list(perts.TestType().ps_rules.keys()))
+                selection = input("::")
+                assert selection in perts.TestType().ps_rules.keys(), "Input has to be in available selection rules"
+                
+                if selection == "Manual":
+                    manual_path = os.path.abspath(input("Introduce path to manual selection for perturbations:"))
+                    assert os.path.exists(manual_path), "File doesn't exist"
+                    assert os.path.splitext(manual_path) == ".npy", "Currently only .npy files are supported"
+                else:
+                    manual_path = ""
 
-    def load_images(self, folder):
+                prop = input("Introduce proportion of perturbed patches (0-1):")
+                assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
+                k = input("Introduce degree of perturbation:")
+                #assert float(k)%90 == 0, "Angle has to be a multiple of 90"
+                self.tests[selection.capitalize()+pert.capitalize()+os.path.split(manual_path)[0]] = {"TestType":perts.TestType(patch_selection=selection, perturbation=pert), 
+                "proportion":float(prop), "degree":float(k), "patch_shape":tuple(patch_shape), "manual_path":manual_path}
+            except AssertionError:
+                continue
+
+        return
+
+    def load_images(self, folder, group_samples=1):
         # load a batch of samples
 
         folder = os.path.abspath(folder)
@@ -83,6 +95,16 @@ class ExperimentBuilder():
                 all_files.pop(all_files.index(file))
         ### finally, return a list with the path of each file
 
+        samples = {}
+        for file in all_files:
+            filename = os.path.splitext(file)[0]
+            sample_id = nnunet_get_sample_id(filename)
+            try:
+                samples[sample_id].append(os.path.join(folder, file))
+            except KeyError:
+                samples[sample_id] = [os.path.join(folder, file)]
+
+        print(samples)
         return [os.path.join(folder, file) for file in all_files]
     
     def load_config(self, path):
@@ -94,6 +116,11 @@ class ExperimentBuilder():
             self.tests[test]["TestType"] = perts.TestType(patch_selection = select, perturbation = pert)
             self.tests[test]["patch_shape"] = tuple(self.tests[test]["patch_shape"])
 
+            try:
+                self.tests[test]["manual_path"] = os.path.abspath(self.tests[test]["manual_path"])
+            except (KeyError, TypeError) as e:
+                self.tests[test]["manual_path"] = None
+
     def save_config(self):
         with open(os.path.join(self.out_folder, "tests.json"), "w") as f:
             json.dump(self.tests, f, indent=2, cls=perts.TestTypeJSONEncoder)
@@ -104,9 +131,16 @@ class ExperimentBuilder():
             image = patches.SampleImage(img_path=image_path)
             for test in self.tests:
                 out_folder = utils.try_mkdir(os.path.join(self.pert_img_folder, test), verbose=False)
+                
                 test = self.tests[test]
+                probability = test["proportion"]
+                k = test["degree"]
+                manual_path = test["manual_path"]
+
+
                 image.split_into_patches(test["patch_shape"])
-                image.patches = test["TestType"].apply(patches=image.patches, probability=test["proportion"], k=test["degree"])
+                # clearly here theres a different selection for each image so each modality is getting different patches perturbed!!
+                image.patches = test["TestType"].apply(patches=image.patches, probability=probability, k=k, manual_path=manual_path)
                 image.paste_patches()
                 image.save_img(out_path=out_folder)
 
@@ -149,3 +183,7 @@ class ExperimentBuilder():
 
     def predict_and_evaluate(self):
         pass
+
+
+def nnunet_get_sample_id(f:str):
+    return f.split("_")[1]

@@ -19,9 +19,9 @@ class TestType():
         self.patch_selection_function = patch_selection
         self.perturbation_function = perturbation
     
-    def apply(self, patches, probability, k):
+    def apply(self, patches, probability, k, manual_path=None):
 
-        select = self.patch_selection(patches, probability)
+        select = self.patch_selection(patches, probability, manual_path)
 
         perturbed = patches.copy()
 
@@ -33,9 +33,12 @@ class TestType():
 
         return perturbed
     
-    def patch_selection(self, patches, probability):
+    def patch_selection(self, patches, probability, manual_path=None):
         if self.patch_selection_function:
-            select = self.ps_rules[self.patch_selection_function](patches, probability)
+            if self.patch_selection_function == "Manual":
+                select = self.ps_rules[self.patch_selection_function](patches, probability, manual_path)
+            else:
+                select = self.ps_rules[self.patch_selection_function](patches, probability)
             return select
         else:
             raise NotImplementedError

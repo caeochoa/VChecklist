@@ -110,12 +110,14 @@ def pad_selection(patches:np.ndarray, selection:np.ndarray, axis, value=0):
     selection = np.append(selection, np.full(shape, value), axis)
     return selection.astype(np.bool8)
 
-def patch_selection_intersection(select:np.ndarray):
+def patch_selection_intersection(select:np.ndarray, probability:float):
     new_select = np.zeros((select.shape[0],select.shape[1],select.shape[2]), np.bool8)
+    selection = np.random.rand(select.shape[0],select.shape[1],select.shape[2])
+    selection = selection <= probability
     for i in range(select.shape[0]):
         for j in range(select.shape[1]):
             for k in range(select.shape[2]):
-                if np.any(select[i,j,k]):
+                if np.any(select[i,j,k]) and selection[i,j,k]:
                     new_select[i,j,k] = True
 
     return new_select
@@ -138,9 +140,17 @@ def Outer_PatchSelection(patches:np.ndarray, probability:float):
     centre = Central_PatchSelection(patches, 1) 
     selection[centre] = 0
 
-    return selection
+    return selection.astype(np.bool8)
 
 def Random_PatchSelection(patches:np.ndarray, probability:float):
     select = np.random.rand(patches.shape[0], patches.shape[1], patches.shape[2])
     select = select <= probability
+    return select.astype(np.bool8)
+
+def Manual_PatchSelection(patches:np.ndarray, probability:float, manual_path:str):
+    with open(os.path.abspath(manual_path), mode="rb") as file:
+        select = np.load(file)
+        select = split_into_patches(select, patches.shape[3:])
+        select = patch_selection_intersection(select, probability)
+    
     return select.astype(np.bool8)

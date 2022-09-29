@@ -10,7 +10,8 @@
       50,
       50,
       50
-    ]
+    ],
+    "manual_path": null
   },
   "CentralBlurr": {
     "TestType": {
@@ -23,7 +24,8 @@
       50,
       50,
       50
-    ]
+    ],
+    "manual_path": null
   },
   "RandomRotation": {
     "TestType": {
@@ -36,6 +38,21 @@
       50,
       50,
       50
-    ]
+    ],
+    "manual_path": null
+  },
+  "ManualRotation": {
+    "TestType": {
+      "patch_selection_function": "Manual",
+      "perturbation_function": "rotation"
+    },
+    "proportion": 0.5,
+    "degree": 1.0,
+    "patch_shape": [
+      50,
+      50,
+      50
+    ],
+    "manual_path": "/Users/caeochoa/Documents/GUH20/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
   }
 }
