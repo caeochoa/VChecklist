@@ -21,17 +21,18 @@ class TestType():
     
     def apply(self, patches, probability, k, manual_path=None):
 
-        select = self.patch_selection(patches, probability, manual_path)
+        select = self.patch_selection(patches[0], probability, manual_path)
 
-        perturbed = patches.copy()
+        perturbed_images = patches.copy()
 
-        for i in range(select.shape[0]):
-            for j in range(select.shape[1]):
-                for k in range(select.shape[2]):
-                    if select[i,j,k]:
-                        perturbed[i,j,k] = self.perturbation(perturbed[i,j,k], k)
+        for image in perturbed_images:
+            for i in range(select.shape[0]):
+                for j in range(select.shape[1]):
+                    for k in range(select.shape[2]):
+                        if select[i,j,k]:
+                            image[i,j,k] = self.perturbation(image[i,j,k], k)
 
-        return perturbed
+        return perturbed_images
     
     def patch_selection(self, patches, probability, manual_path=None):
         if self.patch_selection_function:

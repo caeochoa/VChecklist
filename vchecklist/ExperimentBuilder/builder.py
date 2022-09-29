@@ -82,7 +82,7 @@ class ExperimentBuilder():
 
         return
 
-    def load_images(self, folder, group_samples=1):
+    def load_images(self, folder):
         # load a batch of samples
 
         folder = os.path.abspath(folder)
@@ -104,8 +104,8 @@ class ExperimentBuilder():
             except KeyError:
                 samples[sample_id] = [os.path.join(folder, file)]
 
-        print(samples)
-        return [os.path.join(folder, file) for file in all_files]
+        
+        return samples
     
     def load_config(self, path):
         with open(path, "r") as f:
@@ -127,8 +127,8 @@ class ExperimentBuilder():
         
     def perturb(self):
         self.pert_img_folder = utils.try_mkdir(os.path.join(self.out_folder, "images"))
-        for image_path in self.load_images(self.img_folder):
-            image = patches.SampleImage(img_path=image_path)
+        for sample_id, samples in self.load_images(self.img_folder).items():
+            image = patches.SampleImages(img_paths=samples)
             for test in self.tests:
                 out_folder = utils.try_mkdir(os.path.join(self.pert_img_folder, test), verbose=False)
                 
@@ -139,10 +139,11 @@ class ExperimentBuilder():
 
 
                 image.split_into_patches(test["patch_shape"])
+                #print(image.patches)
                 # clearly here theres a different selection for each image so each modality is getting different patches perturbed!!
                 image.patches = test["TestType"].apply(patches=image.patches, probability=probability, k=k, manual_path=manual_path)
                 image.paste_patches()
-                image.save_img(out_path=out_folder)
+                image.save_imgs(out_path=out_folder)
 
 
 

@@ -31,7 +31,34 @@ class SampleImage():
         nifti = convert_nifti.Numpy2Nifti(out_img, self.affine, self.header)
         nib.save(nifti, os.path.join(out_path, self.filename))
         
+class SampleImages():
 
+    def __init__(self, img_paths:list) -> None:
+        self.img_paths = [os.path.abspath(p) for p in img_paths]
+        self.imgs = []
+        for img_path in self.img_paths:
+            self.imgs.append(SampleImage(img_path=img_path))
+    
+    def show_slices_multiple(self):
+        imgs = [i.img for i in self.imgs]
+        show_slices_multiple([central_slices(img) for img in imgs])
+        plt.show()
+    
+    def split_into_patches(self, patch_shape:tuple):
+        self.patch_shape = patch_shape
+        self.patches = []
+        for img in self.imgs:
+            img.split_into_patches(patch_shape)
+            self.patches.append(img.patches)
+    
+    def paste_patches(self):
+        for i, img in enumerate(self.imgs):
+            img.patches = self.patches[i]
+            img.paste_patches()
+    
+    def save_imgs(self, out_path):
+        for img in self.imgs:
+            img.save_img(out_path)
 
 def show_slices_multiple(list_of_slices):
     fig, axes = plt.subplots(1, len(list_of_slices[0]), figsize=(10,5))
