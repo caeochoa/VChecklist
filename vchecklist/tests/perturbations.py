@@ -36,7 +36,7 @@ class TestType():
     
     def patch_selection(self, patches, probability, manual_path=None):
         if self.patch_selection_function:
-            if self.patch_selection_function == "Manual":
+            if self.patch_selection_function == "InsideManual" or self.patch_selection_function == "OutsideManual":
                 select = self.ps_rules[self.patch_selection_function](patches, probability, manual_path)
             else:
                 select = self.ps_rules[self.patch_selection_function](patches, probability)

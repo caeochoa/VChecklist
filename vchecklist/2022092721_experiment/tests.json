@@ -41,9 +41,9 @@
     ],
     "manual_path": null
   },
-  "ManualRotation": {
+  "OutsideManualRotation": {
     "TestType": {
-      "patch_selection_function": "Manual",
+      "patch_selection_function": "OutsideManual",
       "perturbation_function": "rotation"
     },
     "proportion": 0.5,

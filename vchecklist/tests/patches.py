@@ -148,7 +148,7 @@ def patch_selection_intersection(select:np.ndarray, probability:float):
                     new_select[i,j,k] = True
 
     return new_select
-
+    
 def Central_PatchSelection(patches:np.ndarray, probability:float):
     selection = np.random.rand(patches.shape[0]//2,patches.shape[1]//2,patches.shape[2]//2)#, patches.shape[3], patches.shape[4], patches.shape[5])
     selection = selection <= probability
@@ -174,9 +174,17 @@ def Random_PatchSelection(patches:np.ndarray, probability:float):
     select = select <= probability
     return select.astype(np.bool8)
 
-def Manual_PatchSelection(patches:np.ndarray, probability:float, manual_path:str):
+def InsideManual_PatchSelection(patches:np.ndarray, probability:float, manual_path:str):
     with open(os.path.abspath(manual_path), mode="rb") as file:
         select = np.load(file)
+        select = split_into_patches(select, patches.shape[3:])
+        select = patch_selection_intersection(select, probability)
+    
+    return select.astype(np.bool8)
+def OutsideManual_PatchSelection(patches:np.ndarray, probability:float, manual_path:str):
+    with open(os.path.abspath(manual_path), mode="rb") as file:
+        select = np.load(file)
+        select = np.invert(select.astype(np.bool8))
         select = split_into_patches(select, patches.shape[3:])
         select = patch_selection_intersection(select, probability)
     
