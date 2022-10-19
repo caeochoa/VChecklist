@@ -175,7 +175,7 @@ class ExperimentBuilder():
         out_folder=os.path.join(out_folder, "nn-unet")                        
         if not os.path.exists(out_folder):
 
-            predict_from_folder(model=model_folder_name, input_folder=self.img_folder, output_folder=self.out_folder, folds=folds, save_npz=save_npz,
+            predict_from_folder(model=model_folder_name, input_folder=input_folder, output_folder=out_folder, folds=folds, save_npz=save_npz,
                                 num_threads_preprocessing=num_threads_preprocessing, num_threads_nifti_save=num_threads_nifti_save,
                                 lowres_segmentations=lowres_segmentations, part_id=part_id, num_parts=num_parts, tta=tta, mixed_precision=mixed_precision,
                                 overwrite_existing=overwrite_existing, mode=mode , overwrite_all_in_gpu=overwrite_all_in_gpu, step_size=step_size)
