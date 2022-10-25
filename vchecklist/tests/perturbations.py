@@ -7,7 +7,7 @@ import sys
 
 class TestType():
 
-    def __init__(self, patch_selection:str=None, perturbation:str=None) -> None:
+    def __init__(self, patch_selection:str=None, perturbation:str=None, probability:float=None, k=None, manual_path=None) -> None:
 
         self.pert_rules = {name:obj for name,obj in getmembers(sys.modules["tests.perturbations"]) if isfunction(obj) and obj.__module__ == "tests.perturbations"}
         self.ps_rules = {name.split("_")[0]:obj for name,obj in getmembers(patches) if (isfunction(obj) and name.endswith("PatchSelection"))}
@@ -18,8 +18,17 @@ class TestType():
 
         self.patch_selection_function = patch_selection
         self.perturbation_function = perturbation
+        self.probability = probability
+        self.k = k
+        self.manual_path = manual_path 
     
     def apply(self, patches, probability, k, manual_path=None):
+        if not probability:
+            probability = self.probability
+        if not k:
+            k= self.k
+        if not manual_path:
+            manual_path=self.manual_path
 
         select = self.patch_selection(patches[0], probability, manual_path)
 
