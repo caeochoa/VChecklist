@@ -148,7 +148,7 @@ class ExperimentBuilder():
 
 
 
-    def predict(self, input_folder, out_folder):
+    def predict_from_folder(self, input_folder, out_folder):
         
         # make a prediction for the original samples and the perturbed samples
 
@@ -172,7 +172,7 @@ class ExperimentBuilder():
 
         model_folder_name = os.path.join(network_training_output_dir, model, task_name, trainer + "__" +
                                 default_plans_identifier)
-        out_folder=os.path.join(out_folder, "nn-unet")                        
+
         if not os.path.exists(out_folder):
 
             predict_from_folder(model=model_folder_name, input_folder=input_folder, output_folder=out_folder, folds=folds, save_npz=save_npz,
@@ -182,18 +182,63 @@ class ExperimentBuilder():
      
 
 
-    def predict_and_evaluate(self):
-        pass
+    def predict(self):
 
+        self.pred_folder = os.path.join(self.out_folder, "outputs")
+
+        # first predict on original images
+        print("Starting predictions for original images")
+        self.predict_from_folder(input_folder=self.img_folder, out_folder=os.path.join(self.pred_folder, "Original"))
+
+        print("Finished predictions for original images")
+
+        # now for each test predict from it
+        for test in self.tests:
+            print(f"Starting predictions for samples from test {test}")
+            self.predict_from_folder(input_folder=os.path.join(self.pert_img_folder, test), out_folder=os.path.join(self.pred_folder, test))
+
+            print(f"Finished predictions for samples from test {test}")
+
+    def evaluate(self, labels_path, property):
+
+        labels = (0,1,2,4)
+
+        # perform nn_unet evaluations for each set of images
+        # ideally this would be possible with any set of labels: original, perturbed, given by the doctor... but for now I´ll focus on original labels
+        og_preds = os.path.join(self.pred_folder, "Original")
+        evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=og_preds, labels = (0,1,2,4))
+
+        with open(os.path.join(og_preds, "summary.json"), "r") as f:
+            eval_og = json.load(f)
+
+        self.results = self.tests.copy()
+
+        for test in self.results:
+            pred_folder = os.path.join(self.pred_folder, test)
+            evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=pred_folder, labels = labels)
+
+            # now load the evaluation files
+            
+            with open(os.path.join(pred_folder, "summary.json"), "r") as f:
+                eval_pert = json.load(f)
+            
+            assert len(eval_og["results"]["all"]) == len(eval_pert["results"]["all"]), f"The number of samples is different between original and perturbed folders"
+            
+            # now a property should be loaded from the properties file and applied to evals
+            ## right now this is much more specific than I would like because I only have one property
+            similarity = property(eval_og, eval_pert, labels, "Dice")
+
+            for label in labels:
+                self.results[test][label] = [similarity[0, labels.index(label)], similarity[1, labels.index(label)]]
+                mean = np.mean(similarity, 1)
+                self.results[test]["summary"] = f"For configuration {test}, {mean[0]}% of perturbed samples show behaviour that agrees with original samples. (Mean: {mean[1]})"
+
+
+        with open(os.path.join(self.out_folder, "results.json"), "w") as f:
+            json.dumps(self.results, f, indent=2, cls=perts.TestTypeJSONEncoder)
 
 def nnunet_get_sample_id(f:str):
     return f.split("_")[1]
-
-def compare_mean(dict1, dict2, label, criteria):
-    return dict1["results"]["mean"][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
-
-def compare_sample(dict1, dict2, sample, label, criteria):
-    return dict1["results"]["all"][sample][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
 
 def test_property1(output_folder_og, output_folder_perturbed_path, criteria):
 
@@ -210,14 +255,14 @@ def test_property1(output_folder_og, output_folder_perturbed_path, criteria):
     
     eval_difference = []
     for sample in range(len(eval_og["results"]["all"])):
-        eval_difference.append([compare_sample(eval_og, eval_pert, sample, label, criteria) for label in (0,1,2,4)])
+        eval_difference.append([utils.compare_sample(eval_og, eval_pert, sample, label, criteria) for label in (0,1,2,4)])
     
     eval_difference = np.array(eval_difference)
     avg_diff = np.abs(np.mean(eval_difference, axis=1))
     similarity = avg_diff[avg_diff <= 0.01].shape[0]/avg_diff.shape[0]*100
     
     # means = [np.mean(np.array([dic["results"]["mean"][str(label)][criteria] for label in (0,1,2,4)])) for dic in [eval_og, eval_pert]]
-    means = np.mean(np.abs(np.array([compare_mean(eval_og, eval_pert, label, criteria) for label in (0,1,2,4)])))
+    means = np.mean(np.abs(np.array([utils.compare_mean(eval_og, eval_pert, label, criteria) for label in (0,1,2,4)])))
 
     return similarity, means
     
