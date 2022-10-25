@@ -1,36 +1,11 @@
 {
   "CentralRotation": {
     "TestType": {
-      "patch_selection_function": "Central",
-      "perturbation_function": "rotation"
-    },
-    "proportion": 1.0,
-    "degree": 1.0,
-    "patch_shape": [
-      50,
-      50,
-      50
-    ],
-    "manual_path": null
-  },
-  "CentralBlurr": {
-    "TestType": {
-      "patch_selection_function": "Central",
-      "perturbation_function": "blurr"
-    },
-    "proportion": 0.5,
-    "degree": 3.0,
-    "patch_shape": [
-      50,
-      50,
-      50
-    ],
-    "manual_path": null
-  },
-  "RandomRotation": {
-    "TestType": {
-      "patch_selection_function": "Random",
-      "perturbation_function": "rotation"
+      "patch_selection": "Central",
+      "perturbation": "rotation",
+      "probability": null,
+      "k": null,
+      "manual_path": null
     },
     "proportion": 0.5,
     "degree": 1.0,
@@ -39,12 +14,32 @@
       50,
       50
     ],
-    "manual_path": null
+    "manual_path": ""
   },
-  "OutsideManualRotation": {
+  "InsidemanualIntensity": {
     "TestType": {
-      "patch_selection_function": "OutsideManual",
-      "perturbation_function": "rotation"
+      "patch_selection": "InsideManual",
+      "perturbation": "intensity",
+      "probability": null,
+      "k": null,
+      "manual_path": null
+    },
+    "proportion": 0.5,
+    "degree": 30.0,
+    "patch_shape": [
+      50,
+      50,
+      50
+    ],
+    "manual_path": ""
+  },
+  "RandomOcclude": {
+    "TestType": {
+      "patch_selection": "Random",
+      "perturbation": "occlude",
+      "probability": null,
+      "k": null,
+      "manual_path": null
     },
     "proportion": 0.5,
     "degree": 1.0,
@@ -53,6 +48,6 @@
       50,
       50
     ],
-    "manual_path": "/Users/caeochoa/Documents/GUH20/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    "manual_path": ""
   }
 }

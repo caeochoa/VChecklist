@@ -64,12 +64,12 @@ class ExperimentBuilder():
                 selection = input("::")
                 assert selection in perts.TestType().ps_rules.keys(), "Input has to be in available selection rules"
                 
-                if selection == "Manual":
+                if selection == "InsideManual" or selection == "OutsideManual":
                     manual_path = os.path.abspath(input("Introduce path to manual selection for perturbations:"))
                     assert os.path.exists(manual_path), "File doesn't exist"
                     assert os.path.splitext(manual_path) == ".npy", "Currently only .npy files are supported"
                 else:
-                    manual_path = ""
+                    manual_path = None
 
                 prop = input("Introduce proportion of perturbed patches (0-1):")
                 assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
@@ -111,15 +111,11 @@ class ExperimentBuilder():
         with open(path, "r") as f:
             self.tests = json.load(f)
         for test in self.tests:
-            select = self.tests[test]["TestType"]["patch_selection_function"]
-            pert = self.tests[test]["TestType"]["perturbation_function"]
-            self.tests[test]["TestType"] = perts.TestType(patch_selection = select, perturbation = pert)
+            #select = self.tests[test]["TestType"]["patch_selection_function"]
+            #pert = self.tests[test]["TestType"]["perturbation_function"]
+            self.tests[test]["TestType"] = perts.TestType(self.tests[test]["TestType"])
             self.tests[test]["patch_shape"] = tuple(self.tests[test]["patch_shape"])
-
-            try:
-                self.tests[test]["manual_path"] = os.path.abspath(self.tests[test]["manual_path"])
-            except (KeyError, TypeError) as e:
-                self.tests[test]["manual_path"] = None
+    
 
     def save_config(self):
         with open(os.path.join(self.out_folder, "tests.json"), "w") as f:
@@ -133,15 +129,11 @@ class ExperimentBuilder():
                 out_folder = utils.try_mkdir(os.path.join(self.pert_img_folder, test), verbose=False)
                 
                 test = self.tests[test]
-                probability = test["proportion"]
-                k = test["degree"]
-                manual_path = test["manual_path"]
-
 
                 image.split_into_patches(test["patch_shape"])
                 #print(image.patches)
                 # clearly here theres a different selection for each image so each modality is getting different patches perturbed!!
-                image.patches = test["TestType"].apply(patches=image.patches, probability=probability, k=k, manual_path=manual_path)
+                image.patches = test["TestType"].apply(patches=image.patches)
                 image.paste_patches()
                 image.save_imgs(out_path=out_folder)
 

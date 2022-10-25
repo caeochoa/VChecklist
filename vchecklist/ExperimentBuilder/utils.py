@@ -23,3 +23,17 @@ def compare_mean(dict1, dict2, label, criteria):
 
 def compare_sample(dict1, dict2, sample, label, criteria):
     return dict1["results"]["all"][sample][str(label)][criteria] - dict2["results"]["mean"][str(label)][criteria]
+
+def get_value(dict:dict, key:str, adjustment=None):
+    try:
+        out = adjustment(dict[key]) if adjustment else dict[key]
+        return out
+    except (KeyError, TypeError) as e:
+        return None
+
+def clean_dict(dict, keys):
+    clean = {}
+    for key in keys:
+        clean[key] = get_value(dict, key)
+    return clean
+    
