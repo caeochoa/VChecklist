@@ -68,15 +68,17 @@ class ExperimentBuilder():
                     manual_path = os.path.abspath(input("Introduce path to manual selection for perturbations:"))
                     assert os.path.exists(manual_path), "File doesn't exist"
                     assert os.path.splitext(manual_path) == ".npy", "Currently only .npy files are supported"
+                    man = os.path.split(manual_path)[0]
                 else:
                     manual_path = None
+                    man = ""
 
                 prop = input("Introduce proportion of perturbed patches (0-1):")
                 assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
                 k = input("Introduce degree of perturbation:")
                 #assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                self.tests[selection.capitalize()+pert.capitalize()+os.path.split(manual_path)[0]] = {"TestType":perts.TestType(patch_selection=selection, perturbation=pert), 
-                "proportion":float(prop), "degree":float(k), "patch_shape":tuple(patch_shape), "manual_path":manual_path}
+                parameters = {"patch_selection":selection, "perturbation":pert, "proportion":float(prop), "degree":float(k), "manual_path":manual_path}
+                self.tests[selection.capitalize()+pert.capitalize()+os.path.split(manual_path)[0]] = {"TestType":perts.TestType(parameters), "patch_shape":tuple(patch_shape)}
             except AssertionError:
                 continue
 
