@@ -22,7 +22,7 @@ survey_prep
 survey_prep.zip
 "Vision Checklist"
 "Vision Checklist.zip"
-vchecklist/2022092721_experiment/images
+vchecklist/*/images
 
 
 # .out slurm files
