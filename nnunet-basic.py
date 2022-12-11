@@ -7,7 +7,7 @@ import numpy as np
 def predict_simplified(input_path, output_path):
     predict(input_path, output_path)
     output_images = load_images(output_path)
-    outputs = Nifti2Numpy(output_images[0])
+    outputs = Nifti2Numpy(output_images[0])[0]
     outputs = np.expand_dims(outputs, axis=0)
     for image in output_images[1:]:
         array = Nifti2Numpy(image)
