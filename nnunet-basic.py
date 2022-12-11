@@ -13,6 +13,15 @@ def predict_simplified(input_path, output_path):
         array = Nifti2Numpy(image)
         outputs = np.append(outputs, np.expand_dims(array, 0), axis=0)
     
+    output_classes = np.zeros((len(output_images), 2))
+
+    for i, image in enumerate(outputs):
+        if np.any(image != 0):
+            output_classes[i,0] = 1
+        else:
+            output_classes[i,1] = 1
+        
+
     return outputs
 
 
