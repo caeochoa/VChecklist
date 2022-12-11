@@ -29,6 +29,7 @@ class SampleImage():
         if not out_img:
             out_img = self.out_img
         nifti = convert_nifti.Numpy2Nifti(out_img, self.affine, self.header)
+        print("Saving ", self.filename, " in ",out_path)
         nib.save(nifti, os.path.join(out_path, self.filename))
         
 class SampleImages():

@@ -1,10 +1,5 @@
 import os
-from nnunet.inference.predict import predict_from_folder
-from nnunet.paths import network_training_output_dir, default_trainer, default_plans_identifier
-from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
-from nnunet.evaluation.evaluator import evaluate_folder
 import json
-from tabnanny import filename_only
 import numpy as np
 import tests.perturbations as perts
 import tests.patches as patches
@@ -67,8 +62,8 @@ class ExperimentBuilder():
                 if selection == "InsideManual" or selection == "OutsideManual":
                     manual_path = os.path.abspath(input("Introduce path to manual selection for perturbations:"))
                     assert os.path.exists(manual_path), "File doesn't exist"
-                    assert os.path.splitext(manual_path) == ".npy", "Currently only .npy files are supported"
-                    man = os.path.split(manual_path)[0]
+                    assert os.path.splitext(manual_path)[1] == ".npy", "Currently only .npy files are supported"
+                    man = "_" + os.path.splitext(os.path.split(manual_path)[1])[0]
                 else:
                     manual_path = None
                     man = ""
@@ -77,9 +72,10 @@ class ExperimentBuilder():
                 assert 0 <= float(prop) <= 1, "Proportion has to be a decimal between 0 and 1"
                 k = input("Introduce degree of perturbation:")
                 #assert float(k)%90 == 0, "Angle has to be a multiple of 90"
-                parameters = {"patch_selection":selection, "perturbation":pert, "proportion":float(prop), "degree":float(k), "manual_path":manual_path}
-                self.tests[selection.capitalize()+pert.capitalize()+os.path.split(manual_path)[0]] = {"TestType":perts.TestType(parameters), "patch_shape":tuple(patch_shape)}
-            except AssertionError:
+                parameters = {"patch_selection":selection, "perturbation":pert, "probability":float(prop), "degree":float(k), "manual_path":manual_path}
+                self.tests[selection+pert.capitalize()+man] = {"TestType":perts.TestType(parameters=parameters), "patch_shape":tuple(patch_shape)}
+            except AssertionError as e:
+                print(e)
                 continue
 
         return
@@ -115,7 +111,7 @@ class ExperimentBuilder():
         for test in self.tests:
             #select = self.tests[test]["TestType"]["patch_selection_function"]
             #pert = self.tests[test]["TestType"]["perturbation_function"]
-            self.tests[test]["TestType"] = perts.TestType(self.tests[test]["TestType"])
+            self.tests[test]["TestType"] = perts.TestType(parameters=self.tests[test]["TestType"])
             self.tests[test]["patch_shape"] = tuple(self.tests[test]["patch_shape"])
     
 
@@ -128,8 +124,7 @@ class ExperimentBuilder():
         for sample_id, samples in self.load_images(self.img_folder).items():
             image = patches.SampleImages(img_paths=samples)
             for test in self.tests:
-                out_folder = utils.try_mkdir(os.path.join(self.pert_img_folder, test), verbose=False)
-                
+                out_folder = utils.try_mkdir(os.path.join(self.pert_img_folder, test), verbose=True)
                 test = self.tests[test]
 
                 image.split_into_patches(test["patch_shape"])
@@ -146,6 +141,10 @@ class ExperimentBuilder():
         
         # make a prediction for the original samples and the perturbed samples
 
+        from nnunet.inference.predict import predict_from_folder
+        from nnunet.paths import network_training_output_dir, default_trainer, default_plans_identifier
+        from nnunet.utilities.task_name_id_conversion import convert_id_to_task_name
+        
         model = "3d_fullres" # -m
         folds = None
         save_npz = False
@@ -173,7 +172,7 @@ class ExperimentBuilder():
                                 num_threads_preprocessing=num_threads_preprocessing, num_threads_nifti_save=num_threads_nifti_save,
                                 lowres_segmentations=lowres_segmentations, part_id=part_id, num_parts=num_parts, tta=tta, mixed_precision=mixed_precision,
                                 overwrite_existing=overwrite_existing, mode=mode , overwrite_all_in_gpu=overwrite_all_in_gpu, step_size=step_size)
-     
+        
 
 
     def predict(self):
@@ -195,6 +194,8 @@ class ExperimentBuilder():
 
     def evaluate(self, labels_path, property):
 
+        from nnunet.evaluation.evaluator import evaluate_folder
+        
         labels = (0,1,2,4)
 
         # perform nn_unet evaluations for each set of images
@@ -262,7 +263,7 @@ def test_property1(output_folder_og, output_folder_perturbed_path, criteria):
     
 
 def write_report(output_folder_perturbed, labels_perturbed, output_folder_og):
-
+    '''
     folders = [folder for folder in os.listdir(output_folder_perturbed) if not os.path.isfile(os.path.join(output_folder_perturbed, folder))]
 
     report = []
@@ -277,4 +278,4 @@ def write_report(output_folder_perturbed, labels_perturbed, output_folder_og):
         report.append(result)
 
     with open(os.path.join(output_folder_perturbed, "property_results.txt"), mode="w") as report_file:
-        report_file.write("\n".join(report))
+        report_file.write("\n".join(report))'''

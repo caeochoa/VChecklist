@@ -5,7 +5,7 @@ def try_mkdir(path, verbose=True):
         if verbose:
             print(f"Creating directory {path}")
         os.mkdir(path)
-    except OSError:
+    except FileExistsError:
         if verbose:
             print("Directory already exists")
     return os.path.abspath(path)
@@ -31,9 +31,11 @@ def get_value(dict:dict, key:str, adjustment=None):
     except (KeyError, TypeError) as e:
         return None
 
-def clean_dict(dict, keys):
+def clean_dict(dict, keys, verbose=False):
     clean = {}
     for key in keys:
         clean[key] = get_value(dict, key)
+        if verbose:
+            print(key + f" set to {clean[key]}")
     return clean
     

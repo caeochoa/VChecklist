@@ -1,53 +1,44 @@
 {
-  "CentralRotation": {
-    "TestType": {
-      "patch_selection": "Central",
-      "perturbation": "rotation",
-      "probability": null,
-      "k": null,
-      "manual_path": null
-    },
-    "proportion": 0.5,
-    "degree": 1.0,
-    "patch_shape": [
-      50,
-      50,
-      50
-    ],
-    "manual_path": ""
-  },
-  "InsidemanualIntensity": {
-    "TestType": {
-      "patch_selection": "InsideManual",
-      "perturbation": "intensity",
-      "probability": null,
-      "k": null,
-      "manual_path": null
-    },
-    "proportion": 0.5,
-    "degree": 30.0,
-    "patch_shape": [
-      50,
-      50,
-      50
-    ],
-    "manual_path": ""
-  },
-  "RandomOcclude": {
+  "RandomRotation": {
     "TestType": {
       "patch_selection": "Random",
-      "perturbation": "occlude",
-      "probability": null,
-      "k": null,
+      "perturbation": "rotation",
+      "probability": 0.5,
+      "degree": 1.0,
       "manual_path": null
     },
-    "proportion": 0.5,
-    "degree": 1.0,
     "patch_shape": [
       50,
       50,
       50
-    ],
-    "manual_path": ""
+    ]
+  },
+  "OutsideManualIntensity_tumour_selection": {
+    "TestType": {
+      "patch_selection": "OutsideManual",
+      "perturbation": "intensity",
+      "probability": 0.8,
+      "degree": 80.0,
+      "manual_path": "/Users/caeochoa/Documents/GUH20/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  },
+  "InsideManualOcclude_tumour_selection": {
+    "TestType": {
+      "patch_selection": "InsideManual",
+      "perturbation": "occlude",
+      "probability": 0.9,
+      "degree": 1.0,
+      "manual_path": "/Users/caeochoa/Documents/GUH20/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
   }
 }

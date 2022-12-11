@@ -12,12 +12,23 @@ class TestType():
     def __init__(self, **parameters) -> None:
 
         ''' parameters =  patch_selection:str=None, perturbation:str=None, probability:float=None, k=None, manual_path=None'''
-        accepted_parameters =  ["patch_selection", "perturbation", "probability", "k", "manual_path"]
-        self.__dict__ = clean_dict(parameters, accepted_parameters)
+        
+
+        
+        accepted_parameters =  ["patch_selection", "perturbation", "probability", "degree", "manual_path"]
         self.accepted_parameters = accepted_parameters
         self.pert_rules = {name:obj for name,obj in getmembers(sys.modules["tests.perturbations"]) if isfunction(obj) and obj.__module__ == "tests.perturbations"}
         self.ps_rules = {name.split("_")[0]:obj for name,obj in getmembers(patches) if (isfunction(obj) and name.endswith("PatchSelection"))}
 
+        if not parameters:
+            return
+        for param in accepted_parameters:
+            self.__dict__[param] = get_value(parameters["parameters"], param)
+        
+        print(f"Testype initiated with config:")
+        for param in accepted_parameters:
+            print(param + ":", self.__dict__[param])
+        
         #perturbation = get_value(parameters, "perturbation")
         #patch_selection = get_value(parameters, "patch_selection")
         if self.perturbation and self.patch_selection:
@@ -35,10 +46,12 @@ class TestType():
     
     def apply(self, patches):
 
+        print(f"Creating patches according to {self.patch_selection}")
         select = self.__patch_selection__(patches[0])
 
         perturbed_images = patches.copy()
 
+        print(f"Perturbating patches according to {self.perturbation}")
         for image in perturbed_images:
             for i in range(select.shape[0]):
                 for j in range(select.shape[1]):
@@ -49,18 +62,18 @@ class TestType():
         return perturbed_images
     
     def __patch_selection__(self, patches):
-        if self.patch_selection_function:
-            if self.patch_selection_function == "InsideManual" or self.patch_selection_function == "OutsideManual":
-                select = self.ps_rules[self.patch_selection_function](patches, self.probability, self.manual_path)
+        if self.patch_selection:
+            if self.patch_selection == "InsideManual" or self.patch_selection == "OutsideManual":
+                select = self.ps_rules[self.patch_selection](patches, self.probability, self.manual_path)
             else:
-                select = self.ps_rules[self.patch_selection_function](patches, self.probability)
+                select = self.ps_rules[self.patch_selection](patches, self.probability)
             return select
         else:
             raise NotImplementedError
 
     def __perturbation__(self, img):
-        if self.perturbation_function:
-            perturbed = self.pert_rules[self.perturbation_function](img, self.k)
+        if self.perturbation:
+            perturbed = self.pert_rules[self.perturbation](img, self.degree)
             return perturbed
         else:
             raise NotImplementedError
@@ -83,7 +96,7 @@ def occlude(img:np.ndarray, *args):
     return np.zeros(img.shape)
 
 def blurr(img, k):
-    return zoom(zoom(img, (1/k, 1/k, 1/k)), (k,k,k))
+    return zoom(zoom(img, (k, k, k)), (1/k,1/k,1/k))
 
 # no shuffle for now
 
