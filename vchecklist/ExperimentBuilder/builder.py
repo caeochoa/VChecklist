@@ -25,6 +25,7 @@ class ExperimentBuilder():
         if not experiment_name:
             experiment_name = datetime.now().strftime("%Y%m%d%H") + "_experiment"
         self.out_folder = utils.try_mkdir(os.path.join(self.out_folder, experiment_name))
+        self.pred_folder = os.path.join(self.out_folder, "outputs")
         
 
         if tests_config:
@@ -176,9 +177,7 @@ class ExperimentBuilder():
 
 
     def predict(self):
-
-        self.pred_folder = os.path.join(self.out_folder, "outputs")
-
+        
         # first predict on original images
         print("Starting predictions for original images")
         self.predict_from_folder(input_folder=self.img_folder, out_folder=os.path.join(self.pred_folder, "Original"))
