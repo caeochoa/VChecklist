@@ -23,8 +23,11 @@ survey_prep.zip
 "Vision Checklist"
 "Vision Checklist.zip"
 vchecklist/*/images
+vchecklist/*/outputs
 
-
+exp_outputs/*/images
+exp_outputs/*/outputs
+exp_outputs/*.zip
 # .out slurm files
 **/slurm-*.out
 **/*.cpython-310.pyc

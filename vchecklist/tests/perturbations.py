@@ -5,7 +5,7 @@ from json import JSONEncoder
 from inspect import getmembers, isfunction
 import sys
 from ExperimentBuilder.utils import get_value, clean_dict
-from os.path import abspath
+from os import path
 
 class TestType():
 
@@ -24,7 +24,8 @@ class TestType():
             return
         for param in accepted_parameters:
             self.__dict__[param] = get_value(parameters["parameters"], param)
-        
+        self.manual_path = path.abspath(path.expanduser(self.manual_path)) if self.manual_path else None
+
         print(f"Testype initiated with config:")
         for param in accepted_parameters:
             print(param + ":", self.__dict__[param])
@@ -34,8 +35,7 @@ class TestType():
         if self.perturbation and self.patch_selection:
             assert self.perturbation in self.pert_rules.keys()
             assert self.patch_selection in self.ps_rules.keys()
-        
-        self.manual_path = abspath(self.manual_path) if self.manual_path else None
+       
         
 
         '''self.patch_selection_function = patch_selection

@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("--predict", help="Just perform predictions with nn-UNet", action="store_true")
     parser.add_argument("--evaluate", help="Just evaluate VC results of nn-UNet", action="store_true")
     parser.add_argument("--name", help="Name for experiment folder")
-    parser.add_argument("--labels", help="Path to labels folder for evaluation")
+    parser.add_argument("-l", "--labels", help="Path to labels folder for evaluation")
     args = parser.parse_args()
 
     img_path = os.path.abspath(args.input)

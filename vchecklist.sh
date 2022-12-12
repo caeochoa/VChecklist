@@ -43,13 +43,14 @@ echo Done!
 echo Running vc.py
 export nnUNet_raw_data_base="/disk/scratch/s2259310/nnUNet_raw_data_base"
 export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
-python vc.py -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/ -c /disk/scratch/s2259310/$experiment_name/tests.json --name $experiment_name
+python vchecklist/vc.py -i /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/images -o /disk/scratch/s2259310/ -c /disk/scratch/s2259310/$experiment_name/tests.json --name $experiment_name -l /disk/scratch/s2259310/nnUNet_raw_data_base/nnUNet_raw_data/Task500_BraTS2021/labels 
 echo Done!!!! 
+
 
 echo Compressing outputs and copying them to home directory
 cd /disk/scratch/s2259310/
 zip -r $experiment_name.zip $experiment_name
-rsync /disk/scratch/s2259310/$experiment_name.zip /home/s2259310/VChecklist/
-unzip -u /home/s2259310/VChecklist/$experiment_name.zip -d /home/s2259310/VChecklist/
+rsync /disk/scratch/s2259310/$experiment_name.zip /home/s2259310/VChecklist/exp_outputs
+unzip -u /home/s2259310/VChecklist/exp_outputs/$experiment_name.zip -d /home/s2259310/VChecklist/exp_outputs
 
 echo All done!! Good job!!
