@@ -11,7 +11,7 @@ echo Done!
 
 echo Decompressing data...
 unzip -u /disk/scratch/s2259310/$1.zip -d /disk/scratch/s2259310
-unzip -u /disk/scratch/s2259310/data.zip \*seg.nii.gz -d /disk/scratch/$1
+unzip -u /disk/scratch/s2259310/data.zip \*seg.nii.gz -d /disk/scratch/s2259310/$1
 echo Done!
 
 echo Converting data...
