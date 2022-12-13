@@ -202,6 +202,7 @@ class ExperimentBuilder():
         og_preds = os.path.join(self.pred_folder, "Original")
 
         print("Performing evaluation of original predictions")
+        print("Folder: ", og_preds)
         evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=og_preds, labels = labels)
 
         with open(os.path.join(og_preds, "summary.json"), "r") as f:
@@ -212,6 +213,7 @@ class ExperimentBuilder():
         for test in self.results:
             print(f"Performing evaluation of {test} predictions")
             pred_folder = os.path.join(self.pred_folder, test)
+            print("Folder: ", pred_folder)
             evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=pred_folder, labels = labels)
 
             # now load the evaluation files
