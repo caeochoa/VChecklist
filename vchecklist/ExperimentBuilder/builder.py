@@ -177,7 +177,7 @@ class ExperimentBuilder():
 
 
     def predict(self):
-        
+
         # first predict on original images
         print("Starting predictions for original images")
         self.predict_from_folder(input_folder=self.img_folder, out_folder=os.path.join(self.pred_folder, "Original"))
@@ -200,7 +200,9 @@ class ExperimentBuilder():
         # perform nn_unet evaluations for each set of images
         # ideally this would be possible with any set of labels: original, perturbed, given by the doctor... but for now I´ll focus on original labels
         og_preds = os.path.join(self.pred_folder, "Original")
-        evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=og_preds, labels = (0,1,2,4))
+
+        print("Performing evaluation of original predictions")
+        evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=og_preds, labels = labels)
 
         with open(os.path.join(og_preds, "summary.json"), "r") as f:
             eval_og = json.load(f)
@@ -208,6 +210,7 @@ class ExperimentBuilder():
         self.results = self.tests.copy()
 
         for test in self.results:
+            print(f"Performing evaluation of {test} predictions")
             pred_folder = os.path.join(self.pred_folder, test)
             evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=pred_folder, labels = labels)
 
@@ -218,6 +221,7 @@ class ExperimentBuilder():
             
             assert len(eval_og["results"]["all"]) == len(eval_pert["results"]["all"]), f"The number of samples is different between original and perturbed folders"
             
+            print(f"Comparing the results of {test} with the original predictions")
             # now a property should be loaded from the properties file and applied to evals
             ## right now this is much more specific than I would like because I only have one property
             similarity = property(eval_og, eval_pert, labels, "Dice")
