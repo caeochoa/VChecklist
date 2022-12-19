@@ -210,8 +210,25 @@ class ExperimentBuilder():
 
         self.results = self.tests.copy()
 
+        # labels need to be padded in order to have the same size as perturbed outputs
+
+        if not self.pert_img_folder:
+            self.pert_img_folder = utils.try_mkdir(os.path.join(self.out_folder, "images"))
+        
+        labels_path = utils.try_mkdir(os.path.join(self.pert_img_folder, "Labels"))
+
+
         for test in self.results:
             print(f"Performing evaluation of {test} predictions")
+
+            # this still doesn't work -- we need a patch_shape and that has to be extracted from each test type
+            test_labels_path = utils.try_mkdir(os.path.join(labels_path, test))
+            for sample_id, samples in self.load_images(self.img_folder).items():
+                image = patches.SampleImages(img_paths=samples).imgs[0] # assuming just on labels image per sample id
+                image.out_img = np.pad(image.img, patches.pad_img(image.img.shape, self.results[test]["patch_shape"]))
+                image.save_img(test_labels_path)
+
+
             pred_folder = os.path.join(self.pred_folder, test)
             print("Folder: ", pred_folder)
             evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=pred_folder, labels = labels)

@@ -2,6 +2,7 @@ from ExperimentBuilder.builder import ExperimentBuilder
 import timeit
 from ExperimentBuilder import utils
 from tests.perturbations import TestType
+from tests import patches as p
 from inspect import getmembers, isfunction
 import sys
 import argparse
@@ -54,6 +55,19 @@ def Test_Perturbations_well_defined():
     
     return (np.all(test))
 
+def Test_patches_well_defined():
+    '''Test that splitting an image into patches and pasting them back together doesn't change it's dimmensions'''
+
+    image = np.ones((240,240,155))
+    print(f"Testing image of size {image.shape}")
+    patches = p.split_into_patches(image, (50,50,50))
+    print(f"Split into patches of size {patches[0,0,0].shape}")
+    new_image = p.paste_patches(patches)
+    print(f"Pasted into size {new_image.shape}")
+
+    return image.shape == new_image.shape
+
+
 
 def full_test_config_file():
     return True
@@ -74,10 +88,14 @@ if __name__ == "__main__":
 
     if args.all:
         for test in tests:
-            print(test + ": ",tests[test]())
+            print(test)
+            print("---------------------------------------")
+            print("Result: ",tests[test]())
         full_test_config_file()
     elif args.test in tests:
-        print(args.test + ": ", tests[args.test]())
+        print(args.test)
+        print("---------------------------------------")
+        print("Result: ",tests[args.test]())
     elif args.test == "full_test_config_file":
         full_test_config_file()
     elif args.test == "full_test_noconfig_file":

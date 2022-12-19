@@ -89,23 +89,20 @@ def central_slices(img:np.ndarray):
     return [img[s[0]//2, :, :], img[:, s[1]//2, :], img[:, :, s[2]//2]]
 
 
-def pad_img(img:np.ndarray, patch_shape:int, axis):
-    #assert len(img.shape) == len(patch_shape), f"Patch shape {patch_shape}, doesn't fit number of dimensions ({len(img.shape)})"
-    mod = img.shape[axis]%patch_shape
-    shape = list(img.shape)
-    shape[axis] = (patch_shape - mod)//2
-    pad_img = np.append(np.zeros(shape), img, axis)
-    #assert np.all(pad_img[shape[0]:, :, :] == img), f"{axis}: {pad_img[shape[0]:, :, :].shape}, {img.shape}"
-    shape[axis] = (patch_shape - mod)//2 + (patch_shape - mod)%2
-    pad_img = np.append(pad_img, np.zeros(shape), axis)
-    return pad_img
+def pad_img(img_shape:tuple, patch_shape:tuple):
+
+    pad = []
+    for axis in range(len(img_shape)):
+        mod = img_shape[axis]%patch_shape[axis]
+        pad.append([(patch_shape[axis] - mod)//2,(patch_shape[axis] - mod)//2 + (patch_shape[axis] - mod)%2])
+
+    return pad
 
 def split_into_patches(img:np.ndarray, patch_shape:tuple):
     assert len(img.shape) == len(patch_shape), f"Patch shape {patch_shape}, doesn't fit number of dimensions ({len(img.shape)})"
     patchnum = []
-    padimg = img.copy()
+    padimg = np.pad(img, pad_img(img.shape, patch_shape))
     for dim in range(len(img.shape)):
-        padimg = pad_img(padimg, patch_shape[dim], dim)
         assert padimg.shape[dim] % patch_shape[dim] == 0, f"{padimg.shape},{patch_shape},{dim}"
         patchnum.append(padimg.shape[dim]//patch_shape[dim])
     patches = np.zeros(tuple(patchnum) + patch_shape)
@@ -120,6 +117,7 @@ def split_into_patches(img:np.ndarray, patch_shape:tuple):
 def paste_patches(patches:np.ndarray):
     dims = len(patches.shape)//2
     img = np.zeros([patches.shape[i+dims]*patches.shape[i] for i in range(dims)])
+    print(img.shape)
 
     for i in range(patches.shape[0]):
         for j in range(patches.shape[1]):
