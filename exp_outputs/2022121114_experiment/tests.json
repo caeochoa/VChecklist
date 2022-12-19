@@ -1,0 +1,44 @@
+{
+  "RandomRotation": {
+    "TestType": {
+      "patch_selection": "Random",
+      "perturbation": "rotation",
+      "probability": 0.5,
+      "degree": 1.0,
+      "manual_path": null
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  },
+  "OutsideManualIntensity_tumour_selection": {
+    "TestType": {
+      "patch_selection": "OutsideManual",
+      "perturbation": "intensity",
+      "probability": 0.8,
+      "degree": 80.0,
+      "manual_path": "~/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  },
+  "InsideManualOcclude_tumour_selection": {
+    "TestType": {
+      "patch_selection": "InsideManual",
+      "perturbation": "occlude",
+      "probability": 0.9,
+      "degree": 1.0,
+      "manual_path": "~/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ]
+  }
+}
