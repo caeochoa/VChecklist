@@ -223,10 +223,12 @@ class ExperimentBuilder():
 
             # this still doesn't work -- we need a patch_shape and that has to be extracted from each test type
             test_labels_path = utils.try_mkdir(os.path.join(labels_path, test))
+            print(f"Padding labels at {test_labels_path}")
             for sample_id, samples in self.load_images(self.img_folder).items():
                 image = patches.SampleImages(img_paths=samples).imgs[0] # assuming just on labels image per sample id
                 image.out_img = np.pad(image.img, patches.pad_img(image.img.shape, self.results[test]["patch_shape"]))
                 image.save_img(test_labels_path)
+            print("Done")
 
 
             pred_folder = os.path.join(self.pred_folder, test)
