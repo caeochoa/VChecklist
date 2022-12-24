@@ -253,9 +253,9 @@ class ExperimentBuilder():
             similarity = property(eval_og, eval_pert, labels, "Dice")
 
             for label in labels:
-                self.results[test][label] = [similarity[0, labels.index(label)], similarity[1, labels.index(label)]]
-                mean = np.mean(similarity, 1)
-                self.results[test]["summary"] = f"For configuration {test}, {mean[0]}% of perturbed samples show behaviour that agrees with original samples. (Mean: {mean[1]})"
+                self.results[test]["similarity_"+str(label)] = [similarity[0, labels.index(label)], similarity[1, labels.index(label)]]
+            mean = np.mean(similarity, 1)
+            self.results[test]["summary"] = f"For configuration {test}, {mean[0]}% of perturbed samples show behaviour that agrees with original samples. (Mean difference: {mean[1]})"
 
 
         with open(os.path.join(self.out_folder, "results.json"), "w") as f:
