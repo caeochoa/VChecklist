@@ -21,7 +21,7 @@ def agrees_Property(eval_og, eval_perturbed, labels, criteria):
         similarity[i] = label_diff[label_diff <= 0.1].shape[0]/label_diff.shape[0]*100
     
     similarity = np.expand_dims(similarity, 0)
-    means = np.expand_dims(np.array([utils.compare_mean(eval_og, eval_perturbed, label, criteria) for label in labels]))
+    means = np.expand_dims(np.array([utils.compare_mean(eval_og, eval_perturbed, label, criteria) for label in labels]), 0)
     similarity = np.append(similarity, means, 0)
 
     return similarity
