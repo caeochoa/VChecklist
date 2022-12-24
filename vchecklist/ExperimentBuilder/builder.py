@@ -227,13 +227,15 @@ class ExperimentBuilder():
             for sample_id, samples in self.load_images(self.img_folder).items():
                 image = patches.SampleImages(img_paths=samples).imgs[0] # assuming just on labels image per sample id
                 image.out_img = np.pad(image.img, patches.pad_img(image.img.shape, self.results[test]["patch_shape"]))
+                print(image.img.shape, image.out_img.shape)
                 image.save_img(test_labels_path)
+                assert os.path.exists(os.path.join(test_labels_path,image.filename)), f"{image.filename} wasn't saved correctly"
             print("Done")
 
 
             pred_folder = os.path.join(self.pred_folder, test)
             print("Folder: ", pred_folder)
-            evaluate_folder(folder_with_gts=labels_path, folder_with_predictions=pred_folder, labels = labels)
+            evaluate_folder(folder_with_gts=test_labels_path, folder_with_predictions=pred_folder, labels = labels)
 
             # now load the evaluation files
             

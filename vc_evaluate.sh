@@ -25,6 +25,9 @@ export RESULTS_FOLDER="/disk/scratch/s2259310/nnUNet_trained_models"
 python vchecklist/vc.py -i /disk/scratch/s2259310/$1/images -o /disk/scratch/s2259310/ -c /disk/scratch/s2259310/$1/tests.json --name $1 -l /disk/scratch/s2259310/$1/labels 
 echo Done!!!! 
 
+echo labels:
+ls /disk/scratch/s2259310/2022121121_experiment/images/Labels/
+ls /disk/scratch/s2259310/2022121121_experiment/images/Labels/RandomRotation/
 
 echo Copying report to home directory
 cd /disk/scratch/s2259310/
