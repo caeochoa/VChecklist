@@ -106,7 +106,7 @@ class ExperimentBuilder():
                 samples[sample_id] = [os.path.join(folder, file)]
 
         print(len(samples), "samples loaded")
-        
+
         return samples
     
     def load_config(self, path):
@@ -218,16 +218,16 @@ class ExperimentBuilder():
         if not self.pert_img_folder:
             self.pert_img_folder = utils.try_mkdir(os.path.join(self.out_folder, "images"))
         
-        labels_path = utils.try_mkdir(os.path.join(self.pert_img_folder, "Labels"))
+        pert_labels_path = utils.try_mkdir(os.path.join(self.pert_img_folder, "Labels"))
 
 
         for test in self.results:
             print(f"Performing evaluation of {test} predictions")
 
             # this still doesn't work -- we need a patch_shape and that has to be extracted from each test type
-            test_labels_path = utils.try_mkdir(os.path.join(labels_path, test))
+            test_labels_path = utils.try_mkdir(os.path.join(pert_labels_path, test))
             print(f"Padding labels at {test_labels_path}")
-            for sample_id, samples in self.load_images(self.img_folder).items():
+            for sample_id, samples in self.load_images(labels_path).items():
                 image = patches.SampleImages(img_paths=samples).imgs[0] # assuming just on labels image per sample id
                 image.out_img = np.pad(image.img, patches.pad_img(image.img.shape, self.results[test]["patch_shape"]))
                 print(image.img.shape, image.out_img.shape)
