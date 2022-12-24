@@ -86,6 +86,8 @@ class ExperimentBuilder():
 
         folder = os.path.abspath(folder)
 
+        print("Loading images from:", folder)
+
         ### make a list of only files, excluding folders
         all_files = utils.listf(folder, "file")
 
@@ -103,6 +105,7 @@ class ExperimentBuilder():
             except KeyError:
                 samples[sample_id] = [os.path.join(folder, file)]
 
+        print(len(samples), "samples loaded")
         
         return samples
     
