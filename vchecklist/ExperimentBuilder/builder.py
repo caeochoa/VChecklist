@@ -259,7 +259,7 @@ class ExperimentBuilder():
 
 
         with open(os.path.join(self.out_folder, "results.json"), "w") as f:
-            json.dumps(self.results, f, indent=2, cls=perts.TestTypeJSONEncoder)
+            json.dump(self.results, f, indent=2, cls=perts.TestTypeJSONEncoder)
 
 def nnunet_get_sample_id(f:str):
     return f.split("_")[1]

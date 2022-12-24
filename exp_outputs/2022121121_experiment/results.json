@@ -1,0 +1,95 @@
+{
+  "RandomRotation": {
+    "TestType": {
+      "patch_selection": "Random",
+      "perturbation": "rotation",
+      "probability": 0.5,
+      "degree": 1.0,
+      "manual_path": null
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ],
+    "0": [
+      100.0,
+      0.0021025477463016973
+    ],
+    "summary": "For configuration RandomRotation, 98.86363636363636% of perturbed samples show behaviour that agrees with original samples. (Mean: -0.0071886923324467255)",
+    "1": [
+      99.0909090909091,
+      -0.02427830515900107
+    ],
+    "2": [
+      96.36363636363636,
+      -0.00657901191708753
+    ],
+    "4": [
+      100.0,
+      0.0
+    ]
+  },
+  "OutsideManualIntensity_tumour_selection": {
+    "TestType": {
+      "patch_selection": "OutsideManual",
+      "perturbation": "intensity",
+      "probability": 0.8,
+      "degree": 80.0,
+      "manual_path": "/home/s2259310/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ],
+    "0": [
+      100.0,
+      0.008369973091454708
+    ],
+    "summary": "For configuration OutsideManualIntensity_tumour_selection, 98.86363636363636% of perturbed samples show behaviour that agrees with original samples. (Mean: -0.003355672581094436)",
+    "1": [
+      99.0909090909091,
+      -0.018613046512390125
+    ],
+    "2": [
+      96.36363636363636,
+      -0.0031796169034423276
+    ],
+    "4": [
+      100.0,
+      0.0
+    ]
+  },
+  "InsideManualOcclude_tumour_selection": {
+    "TestType": {
+      "patch_selection": "InsideManual",
+      "perturbation": "occlude",
+      "probability": 0.9,
+      "degree": 1.0,
+      "manual_path": "/home/s2259310/VChecklist/vchecklist/2022092721_experiment/tumour_selection.npy"
+    },
+    "patch_shape": [
+      50,
+      50,
+      50
+    ],
+    "0": [
+      100.0,
+      0.001001832063381225
+    ],
+    "summary": "For configuration InsideManualOcclude_tumour_selection, 98.18181818181819% of perturbed samples show behaviour that agrees with original samples. (Mean: 0.0005863197319529987)",
+    "1": [
+      97.27272727272728,
+      -0.0022305688551466484
+    ],
+    "2": [
+      95.45454545454545,
+      0.0035740157195774183
+    ],
+    "4": [
+      100.0,
+      0.0
+    ]
+  }
+}
